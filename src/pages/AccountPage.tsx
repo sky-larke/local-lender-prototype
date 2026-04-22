@@ -21,7 +21,7 @@ type IncomingRequest = ListIncomingRequestsData['lendingRequests'][0];
 type OutgoingRequest = ListOutgoingRequestsData['lendingRequests'][0];
 type SDKReview = ListMyReviewsData['reviews'][0];
 
-function mapItem(item: SDKItem): Listing {
+function mapItem(item: SDKItem, currentUser: any): Listing {
   return {
     id: item.id,
     title: item.title,
@@ -32,8 +32,8 @@ function mapItem(item: SDKItem): Listing {
     imageUrl: item.imageUrl ?? '',
     locationDetails: item.locationDetails ?? '',
     category: item.category ?? '',
-    lenderId: '',
-    lenderName: '',
+    lenderId: currentUser?.uid ?? '',
+    lenderName: currentUser?.displayName ?? '',
   };
 }
 
@@ -63,15 +63,15 @@ export const AccountPage = () => {
   const { mutateAsync: deleteItem } = useDeleteItem();
   const { mutateAsync: updateLendingRequestStatus } = useUpdateLendingRequestStatus();
 
-  const myListings = useMemo(() => (myItemsData?.items ?? []).map(mapItem), [myItemsData]);
+  const myListings = useMemo(() => (myItemsData?.items ?? []).map(item => mapItem(item, currentUser)), [myItemsData, currentUser]);
   const myReviews: SDKReview[] = useMemo(() => reviewsData?.reviews ?? [], [reviewsData]);
   const incomingRequests: IncomingRequest[] = useMemo(() => incomingData?.lendingRequests ?? [], [incomingData]);
   const outgoingRequests: OutgoingRequest[] = useMemo(() => outgoingData?.lendingRequests ?? [], [outgoingData]);
 
   const averageRating = useMemo(() => {
-    if (myReviews.length === 0) return null;
+    if (myReviews.length === 0) return undefined;
     const total = myReviews.reduce((sum, r) => sum + r.rating, 0);
-    return (total / myReviews.length).toFixed(1);
+    return total / myReviews.length;
   }, [myReviews]);
 
   const [editingListing, setEditingListing] = useState<Listing | null>(null);
@@ -172,7 +172,7 @@ export const AccountPage = () => {
             </div>
             <div className="rounded-2xl bg-slate-50 p-4">
               <p className="text-sm text-slate-500">Average rating</p>
-              <p className="mt-2 text-2xl font-bold text-slate-900">{averageRating ?? '—'}</p>
+              <p className="mt-2 text-2xl font-bold text-slate-900">{averageRating?.toFixed(1) ?? '—'}</p>
             </div>
           </div>
         </div>
@@ -336,7 +336,7 @@ export const AccountPage = () => {
                   </form>
                 ) : (
                   <>
-                    <ListingCard listing={listing} />
+                    <ListingCard listing={listing} ownerRating={averageRating} />
                     <div className="grid gap-3 sm:grid-cols-3">
                       <button type="button" onClick={() => handleEditClick(listing)}
                         className="rounded-2xl border border-slate-300 px-4 py-3 text-sm font-semibold text-slate-700 hover:bg-slate-50">

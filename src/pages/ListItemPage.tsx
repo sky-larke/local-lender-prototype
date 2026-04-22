@@ -46,12 +46,13 @@ export const ListItemPage = () => {
   const handleSubmit = async (event: { preventDefault(): void }) => {
     event.preventDefault();
     setSubmitError('');
+    
     try {
       await createItem({
         title: values.title,
         description: values.description,
         price: values.price,
-        imageUrl: values.imageUrl || imagePreview || null,
+        imageUrl: values.imageUrl,
         locationDetails: values.locationDetails,
         category: values.category,
       });
@@ -139,6 +140,7 @@ export const ListItemPage = () => {
           <label className="block text-sm font-medium text-slate-700">
             Photo
             <input
+              required
               type="file"
               accept="image/*"
               onChange={handleImageChange}
