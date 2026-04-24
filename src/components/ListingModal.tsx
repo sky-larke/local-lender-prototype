@@ -162,14 +162,7 @@ export const ListingModal = ({ listing, ownerRating, onClose, onRequestSent, onD
               </div>
             </form>
           ) : (
-            <div className="mt-6 grid gap-3 sm:grid-cols-2">
-              <button
-                type="button"
-                onClick={() => onDirectMessage(listing)}
-                className="rounded-2xl border border-slate-300 px-4 py-3 text-sm font-semibold text-slate-700 hover:bg-slate-50"
-              >
-                Direct message owner
-              </button>
+            <div className="mt-6 grid gap-3 sm:grid-cols-1">
               <button
                 type="button"
                 disabled={!isAvailable}

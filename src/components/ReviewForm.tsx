@@ -1,12 +1,18 @@
 import { useState } from 'react';
-import { useQueryClient } from '@tanstack/react-query';
 import { useCreateReview } from '../dataconnect/react';
 import { findUserByDisplayName } from '../dataconnect';
 import { useAppContext } from '../context/AppContext';
 
-export const ReviewForm = () => {
+interface ReviewFormProps {
+  onReviewSubmitted?: (review: {
+    reviewedUserName: string;
+    rating: number;
+    comment: string;
+  }) => void | (() => void);
+}
+
+export const ReviewForm = ({ onReviewSubmitted }: ReviewFormProps) => {
   const { currentUser } = useAppContext();
-  const queryClient = useQueryClient();
   const { mutateAsync: createReview, isPending } = useCreateReview();
 
   const [reviewedUserName, setReviewedUserName] = useState('');
@@ -18,21 +24,34 @@ export const ReviewForm = () => {
   const handleSubmit = async (event: { preventDefault(): void }) => {
     event.preventDefault();
     setError('');
+    setStatus('');
 
-    const { data } = await findUserByDisplayName({ displayName: reviewedUserName });
+    const submittedReview = {
+      reviewedUserName: reviewedUserName.trim(),
+      rating,
+      comment,
+    };
+
+    const { data } = await findUserByDisplayName({ displayName: submittedReview.reviewedUserName });
     const match = data?.users?.[0];
 
     if (!match) {
-      setError(`No user found with the name "${reviewedUserName}". They must have signed in at least once.`);
+      setError(`No user found with the name "${submittedReview.reviewedUserName}". They must have signed in at least once.`);
       return;
     }
 
-    await createReview({ reviewedUserUid: match.uid, rating, comment });
-    await queryClient.invalidateQueries();
-    setReviewedUserName('');
-    setComment('');
-    setRating(5);
-    setStatus('Review submitted.');
+    const rollback = onReviewSubmitted?.(submittedReview);
+
+    try {
+      await createReview({ reviewedUserUid: match.uid, rating: submittedReview.rating, comment: submittedReview.comment });
+      setReviewedUserName('');
+      setComment('');
+      setRating(5);
+      setStatus('Review submitted.');
+    } catch {
+      rollback?.();
+      setError('Could not submit your review. Please try again.');
+    }
   };
 
   if (!currentUser) return null;
