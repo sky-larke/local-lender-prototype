@@ -39,6 +39,12 @@ export const ReviewForm = ({ onReviewSubmitted }: ReviewFormProps) => {
       setError(`No user found with the name "${submittedReview.reviewedUserName}". They must have signed in at least once.`);
       return;
     }
+    
+    // self-review check
+    if (match.uid === currentUser?.uid) {
+      setError("You can't submit a review for yourself.");
+      return;
+    }
 
     const rollback = onReviewSubmitted?.(submittedReview);
 
