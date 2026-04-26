@@ -1,5 +1,7 @@
 export type ItemStatus = 'available' | 'lent' | 'unavailable';
 
+export type ListingCondition = 'new' | 'like_new' | 'good' | 'fair' | 'poor';
+
 export interface Listing {
   id: string;
   title: string;
@@ -21,4 +23,5 @@ export interface ListingFormValues {
   locationDetails: string;
   category: string;
   imageUrl: string;
+  condition: ListingCondition;
 }

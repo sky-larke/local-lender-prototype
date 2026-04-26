@@ -5,6 +5,7 @@ import { useCreateItem } from '../dataconnect/react';
 import { useAppContext } from '../context/AppContext';
 import type { ListingFormValues } from '../types/listing';
 
+
 const initialValues: ListingFormValues = {
   title: '',
   description: '',
@@ -12,6 +13,7 @@ const initialValues: ListingFormValues = {
   locationDetails: '',
   category: 'Tools',
   imageUrl: '',
+  condition: 'good',
 };
 
 export const ListItemPage = () => {
@@ -71,7 +73,7 @@ export const ListItemPage = () => {
 
         <form onSubmit={handleSubmit} className="mt-6 space-y-4">
           <label className="block text-sm font-medium text-slate-700">
-            Title
+            Title<span className="text-red-500">*</span>
             <input
               required
               value={values.title}
@@ -82,7 +84,7 @@ export const ListItemPage = () => {
           </label>
 
           <label className="block text-sm font-medium text-slate-700">
-            Description
+            Description<span className="text-red-500">*</span>
             <textarea
               required
               rows={4}
@@ -131,9 +133,23 @@ export const ListItemPage = () => {
               </select>
             </label>
           </div>
+          <label className="block text-sm font-medium text-slate-700">
+            Condition
+            <select
+              value={values.condition}
+              onChange={(e) => handleChange('condition', e.target.value as ListingFormValues['condition'])}
+              className="mt-2 w-full rounded-2xl border border-slate-300 px-4 py-3"
+            >
+              <option value="new">New</option>
+              <option value="like_new">Like new</option>
+              <option value="good">Good</option>
+              <option value="fair">Fair</option>
+              <option value="poor">Poor</option>
+            </select>
+          </label>
 
           <label className="block text-sm font-medium text-slate-700">
-            Location
+            Location<span className="text-red-500">*</span>
             <input
               required
               value={values.locationDetails}
@@ -144,7 +160,7 @@ export const ListItemPage = () => {
           </label>
 
           <label className="block text-sm font-medium text-slate-700">
-            Photo
+            Photo<span className="text-red-500">*</span>
             <input
               required
               type="file"
