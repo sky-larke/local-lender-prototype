@@ -91,6 +91,8 @@ export interface GetItemData {
     imageUrl?: string | null;
     locationDetails?: string | null;
     category?: string | null;
+    meetupLocationType?: string | null;
+    meetupLocationDetails?: string | null;
     lender?: {
       uid: string;
       displayName: string;
@@ -143,6 +145,8 @@ export interface ListItemsData {
     imageUrl?: string | null;
     locationDetails?: string | null;
     category?: string | null;
+    meetupLocationType?: string | null;
+    meetupLocationDetails?: string | null;
     lender?: {
       uid: string;
       displayName: string;
@@ -162,6 +166,8 @@ export interface ListMyItemsData {
     imageUrl?: string | null;
     locationDetails?: string | null;
     category?: string | null;
+    meetupLocationType?: string | null;
+    meetupLocationDetails?: string | null;
   } & Item_Key)[];
 }
 
@@ -270,114 +276,6 @@ export interface User_Key {
   __typename?: 'User_Key';
 }
 
-interface ListItemsRef {
-  /* Allow users to create refs without passing in DataConnect */
-  (): QueryRef<ListItemsData, undefined>;
-  /* Allow users to pass in custom DataConnect instances */
-  (dc: DataConnect): QueryRef<ListItemsData, undefined>;
-  operationName: string;
-}
-export const listItemsRef: ListItemsRef;
-
-export function listItems(options?: ExecuteQueryOptions): QueryPromise<ListItemsData, undefined>;
-export function listItems(dc: DataConnect, options?: ExecuteQueryOptions): QueryPromise<ListItemsData, undefined>;
-
-interface GetItemRef {
-  /* Allow users to create refs without passing in DataConnect */
-  (vars: GetItemVariables): QueryRef<GetItemData, GetItemVariables>;
-  /* Allow users to pass in custom DataConnect instances */
-  (dc: DataConnect, vars: GetItemVariables): QueryRef<GetItemData, GetItemVariables>;
-  operationName: string;
-}
-export const getItemRef: GetItemRef;
-
-export function getItem(vars: GetItemVariables, options?: ExecuteQueryOptions): QueryPromise<GetItemData, GetItemVariables>;
-export function getItem(dc: DataConnect, vars: GetItemVariables, options?: ExecuteQueryOptions): QueryPromise<GetItemData, GetItemVariables>;
-
-interface ListMyItemsRef {
-  /* Allow users to create refs without passing in DataConnect */
-  (): QueryRef<ListMyItemsData, undefined>;
-  /* Allow users to pass in custom DataConnect instances */
-  (dc: DataConnect): QueryRef<ListMyItemsData, undefined>;
-  operationName: string;
-}
-export const listMyItemsRef: ListMyItemsRef;
-
-export function listMyItems(options?: ExecuteQueryOptions): QueryPromise<ListMyItemsData, undefined>;
-export function listMyItems(dc: DataConnect, options?: ExecuteQueryOptions): QueryPromise<ListMyItemsData, undefined>;
-
-interface ListIncomingRequestsRef {
-  /* Allow users to create refs without passing in DataConnect */
-  (): QueryRef<ListIncomingRequestsData, undefined>;
-  /* Allow users to pass in custom DataConnect instances */
-  (dc: DataConnect): QueryRef<ListIncomingRequestsData, undefined>;
-  operationName: string;
-}
-export const listIncomingRequestsRef: ListIncomingRequestsRef;
-
-export function listIncomingRequests(options?: ExecuteQueryOptions): QueryPromise<ListIncomingRequestsData, undefined>;
-export function listIncomingRequests(dc: DataConnect, options?: ExecuteQueryOptions): QueryPromise<ListIncomingRequestsData, undefined>;
-
-interface ListOutgoingRequestsRef {
-  /* Allow users to create refs without passing in DataConnect */
-  (): QueryRef<ListOutgoingRequestsData, undefined>;
-  /* Allow users to pass in custom DataConnect instances */
-  (dc: DataConnect): QueryRef<ListOutgoingRequestsData, undefined>;
-  operationName: string;
-}
-export const listOutgoingRequestsRef: ListOutgoingRequestsRef;
-
-export function listOutgoingRequests(options?: ExecuteQueryOptions): QueryPromise<ListOutgoingRequestsData, undefined>;
-export function listOutgoingRequests(dc: DataConnect, options?: ExecuteQueryOptions): QueryPromise<ListOutgoingRequestsData, undefined>;
-
-interface ListMyReviewsRef {
-  /* Allow users to create refs without passing in DataConnect */
-  (): QueryRef<ListMyReviewsData, undefined>;
-  /* Allow users to pass in custom DataConnect instances */
-  (dc: DataConnect): QueryRef<ListMyReviewsData, undefined>;
-  operationName: string;
-}
-export const listMyReviewsRef: ListMyReviewsRef;
-
-export function listMyReviews(options?: ExecuteQueryOptions): QueryPromise<ListMyReviewsData, undefined>;
-export function listMyReviews(dc: DataConnect, options?: ExecuteQueryOptions): QueryPromise<ListMyReviewsData, undefined>;
-
-interface GetCurrentUserRef {
-  /* Allow users to create refs without passing in DataConnect */
-  (): QueryRef<GetCurrentUserData, undefined>;
-  /* Allow users to pass in custom DataConnect instances */
-  (dc: DataConnect): QueryRef<GetCurrentUserData, undefined>;
-  operationName: string;
-}
-export const getCurrentUserRef: GetCurrentUserRef;
-
-export function getCurrentUser(options?: ExecuteQueryOptions): QueryPromise<GetCurrentUserData, undefined>;
-export function getCurrentUser(dc: DataConnect, options?: ExecuteQueryOptions): QueryPromise<GetCurrentUserData, undefined>;
-
-interface FindUserByDisplayNameRef {
-  /* Allow users to create refs without passing in DataConnect */
-  (vars: FindUserByDisplayNameVariables): QueryRef<FindUserByDisplayNameData, FindUserByDisplayNameVariables>;
-  /* Allow users to pass in custom DataConnect instances */
-  (dc: DataConnect, vars: FindUserByDisplayNameVariables): QueryRef<FindUserByDisplayNameData, FindUserByDisplayNameVariables>;
-  operationName: string;
-}
-export const findUserByDisplayNameRef: FindUserByDisplayNameRef;
-
-export function findUserByDisplayName(vars: FindUserByDisplayNameVariables, options?: ExecuteQueryOptions): QueryPromise<FindUserByDisplayNameData, FindUserByDisplayNameVariables>;
-export function findUserByDisplayName(dc: DataConnect, vars: FindUserByDisplayNameVariables, options?: ExecuteQueryOptions): QueryPromise<FindUserByDisplayNameData, FindUserByDisplayNameVariables>;
-
-interface ListReviewsRef {
-  /* Allow users to create refs without passing in DataConnect */
-  (): QueryRef<ListReviewsData, undefined>;
-  /* Allow users to pass in custom DataConnect instances */
-  (dc: DataConnect): QueryRef<ListReviewsData, undefined>;
-  operationName: string;
-}
-export const listReviewsRef: ListReviewsRef;
-
-export function listReviews(options?: ExecuteQueryOptions): QueryPromise<ListReviewsData, undefined>;
-export function listReviews(dc: DataConnect, options?: ExecuteQueryOptions): QueryPromise<ListReviewsData, undefined>;
-
 interface UpsertUserRef {
   /* Allow users to create refs without passing in DataConnect */
   (vars: UpsertUserVariables): MutationRef<UpsertUserData, UpsertUserVariables>;
@@ -485,4 +383,112 @@ export const createReviewRef: CreateReviewRef;
 
 export function createReview(vars: CreateReviewVariables): MutationPromise<CreateReviewData, CreateReviewVariables>;
 export function createReview(dc: DataConnect, vars: CreateReviewVariables): MutationPromise<CreateReviewData, CreateReviewVariables>;
+
+interface ListItemsRef {
+  /* Allow users to create refs without passing in DataConnect */
+  (): QueryRef<ListItemsData, undefined>;
+  /* Allow users to pass in custom DataConnect instances */
+  (dc: DataConnect): QueryRef<ListItemsData, undefined>;
+  operationName: string;
+}
+export const listItemsRef: ListItemsRef;
+
+export function listItems(options?: ExecuteQueryOptions): QueryPromise<ListItemsData, undefined>;
+export function listItems(dc: DataConnect, options?: ExecuteQueryOptions): QueryPromise<ListItemsData, undefined>;
+
+interface GetItemRef {
+  /* Allow users to create refs without passing in DataConnect */
+  (vars: GetItemVariables): QueryRef<GetItemData, GetItemVariables>;
+  /* Allow users to pass in custom DataConnect instances */
+  (dc: DataConnect, vars: GetItemVariables): QueryRef<GetItemData, GetItemVariables>;
+  operationName: string;
+}
+export const getItemRef: GetItemRef;
+
+export function getItem(vars: GetItemVariables, options?: ExecuteQueryOptions): QueryPromise<GetItemData, GetItemVariables>;
+export function getItem(dc: DataConnect, vars: GetItemVariables, options?: ExecuteQueryOptions): QueryPromise<GetItemData, GetItemVariables>;
+
+interface ListMyItemsRef {
+  /* Allow users to create refs without passing in DataConnect */
+  (): QueryRef<ListMyItemsData, undefined>;
+  /* Allow users to pass in custom DataConnect instances */
+  (dc: DataConnect): QueryRef<ListMyItemsData, undefined>;
+  operationName: string;
+}
+export const listMyItemsRef: ListMyItemsRef;
+
+export function listMyItems(options?: ExecuteQueryOptions): QueryPromise<ListMyItemsData, undefined>;
+export function listMyItems(dc: DataConnect, options?: ExecuteQueryOptions): QueryPromise<ListMyItemsData, undefined>;
+
+interface ListIncomingRequestsRef {
+  /* Allow users to create refs without passing in DataConnect */
+  (): QueryRef<ListIncomingRequestsData, undefined>;
+  /* Allow users to pass in custom DataConnect instances */
+  (dc: DataConnect): QueryRef<ListIncomingRequestsData, undefined>;
+  operationName: string;
+}
+export const listIncomingRequestsRef: ListIncomingRequestsRef;
+
+export function listIncomingRequests(options?: ExecuteQueryOptions): QueryPromise<ListIncomingRequestsData, undefined>;
+export function listIncomingRequests(dc: DataConnect, options?: ExecuteQueryOptions): QueryPromise<ListIncomingRequestsData, undefined>;
+
+interface ListOutgoingRequestsRef {
+  /* Allow users to create refs without passing in DataConnect */
+  (): QueryRef<ListOutgoingRequestsData, undefined>;
+  /* Allow users to pass in custom DataConnect instances */
+  (dc: DataConnect): QueryRef<ListOutgoingRequestsData, undefined>;
+  operationName: string;
+}
+export const listOutgoingRequestsRef: ListOutgoingRequestsRef;
+
+export function listOutgoingRequests(options?: ExecuteQueryOptions): QueryPromise<ListOutgoingRequestsData, undefined>;
+export function listOutgoingRequests(dc: DataConnect, options?: ExecuteQueryOptions): QueryPromise<ListOutgoingRequestsData, undefined>;
+
+interface ListMyReviewsRef {
+  /* Allow users to create refs without passing in DataConnect */
+  (): QueryRef<ListMyReviewsData, undefined>;
+  /* Allow users to pass in custom DataConnect instances */
+  (dc: DataConnect): QueryRef<ListMyReviewsData, undefined>;
+  operationName: string;
+}
+export const listMyReviewsRef: ListMyReviewsRef;
+
+export function listMyReviews(options?: ExecuteQueryOptions): QueryPromise<ListMyReviewsData, undefined>;
+export function listMyReviews(dc: DataConnect, options?: ExecuteQueryOptions): QueryPromise<ListMyReviewsData, undefined>;
+
+interface GetCurrentUserRef {
+  /* Allow users to create refs without passing in DataConnect */
+  (): QueryRef<GetCurrentUserData, undefined>;
+  /* Allow users to pass in custom DataConnect instances */
+  (dc: DataConnect): QueryRef<GetCurrentUserData, undefined>;
+  operationName: string;
+}
+export const getCurrentUserRef: GetCurrentUserRef;
+
+export function getCurrentUser(options?: ExecuteQueryOptions): QueryPromise<GetCurrentUserData, undefined>;
+export function getCurrentUser(dc: DataConnect, options?: ExecuteQueryOptions): QueryPromise<GetCurrentUserData, undefined>;
+
+interface FindUserByDisplayNameRef {
+  /* Allow users to create refs without passing in DataConnect */
+  (vars: FindUserByDisplayNameVariables): QueryRef<FindUserByDisplayNameData, FindUserByDisplayNameVariables>;
+  /* Allow users to pass in custom DataConnect instances */
+  (dc: DataConnect, vars: FindUserByDisplayNameVariables): QueryRef<FindUserByDisplayNameData, FindUserByDisplayNameVariables>;
+  operationName: string;
+}
+export const findUserByDisplayNameRef: FindUserByDisplayNameRef;
+
+export function findUserByDisplayName(vars: FindUserByDisplayNameVariables, options?: ExecuteQueryOptions): QueryPromise<FindUserByDisplayNameData, FindUserByDisplayNameVariables>;
+export function findUserByDisplayName(dc: DataConnect, vars: FindUserByDisplayNameVariables, options?: ExecuteQueryOptions): QueryPromise<FindUserByDisplayNameData, FindUserByDisplayNameVariables>;
+
+interface ListReviewsRef {
+  /* Allow users to create refs without passing in DataConnect */
+  (): QueryRef<ListReviewsData, undefined>;
+  /* Allow users to pass in custom DataConnect instances */
+  (dc: DataConnect): QueryRef<ListReviewsData, undefined>;
+  operationName: string;
+}
+export const listReviewsRef: ListReviewsRef;
+
+export function listReviews(options?: ExecuteQueryOptions): QueryPromise<ListReviewsData, undefined>;
+export function listReviews(dc: DataConnect, options?: ExecuteQueryOptions): QueryPromise<ListReviewsData, undefined>;
 

@@ -1,5 +1,4 @@
-import { useMemo, useState, type ChangeEvent } from 'react';
-import { useQueryClient } from '@tanstack/react-query';
+import { useEffect, useMemo, useState, type ChangeEvent } from 'react';
 import {
   useListMyItems,
   useListMyReviews,
@@ -10,7 +9,12 @@ import {
   useDeleteItem,
   useUpdateLendingRequestStatus,
 } from '../dataconnect/react';
-import type { ListMyItemsData, ListIncomingRequestsData, ListOutgoingRequestsData, ListMyReviewsData } from '../dataconnect';
+import type {
+  ListMyItemsData,
+  ListIncomingRequestsData,
+  ListOutgoingRequestsData,
+  ListMyReviewsData,
+} from '../dataconnect';
 import { ListingCard } from '../components/ListingCard';
 import { ReviewForm } from '../components/ReviewForm';
 import { useAppContext } from '../context/AppContext';
@@ -21,7 +25,7 @@ type IncomingRequest = ListIncomingRequestsData['lendingRequests'][0];
 type OutgoingRequest = ListOutgoingRequestsData['lendingRequests'][0];
 type SDKReview = ListMyReviewsData['reviews'][0];
 
-function mapItem(item: SDKItem): Listing {
+function mapItem(item: SDKItem, currentUser: any): Listing {
   return {
     id: item.id,
     title: item.title,
@@ -32,8 +36,8 @@ function mapItem(item: SDKItem): Listing {
     imageUrl: item.imageUrl ?? '',
     locationDetails: item.locationDetails ?? '',
     category: item.category ?? '',
-    lenderId: '',
-    lenderName: '',
+    lenderId: currentUser?.uid ?? '',
+    lenderName: currentUser?.displayName ?? '',
   };
 }
 
@@ -51,7 +55,6 @@ const STATUS_STYLE: Record<string, string> = {
 
 export const AccountPage = () => {
   const { currentUser, signIn, signOut } = useAppContext();
-  const queryClient = useQueryClient();
 
   const { data: myItemsData } = useListMyItems();
   const { data: reviewsData } = useListMyReviews();
@@ -63,15 +66,39 @@ export const AccountPage = () => {
   const { mutateAsync: deleteItem } = useDeleteItem();
   const { mutateAsync: updateLendingRequestStatus } = useUpdateLendingRequestStatus();
 
-  const myListings = useMemo(() => (myItemsData?.items ?? []).map(mapItem), [myItemsData]);
-  const myReviews: SDKReview[] = useMemo(() => reviewsData?.reviews ?? [], [reviewsData]);
-  const incomingRequests: IncomingRequest[] = useMemo(() => incomingData?.lendingRequests ?? [], [incomingData]);
-  const outgoingRequests: OutgoingRequest[] = useMemo(() => outgoingData?.lendingRequests ?? [], [outgoingData]);
+  const serverListings = useMemo(
+    () => (myItemsData?.items ?? []).map((item) => mapItem(item, currentUser)),
+    [myItemsData, currentUser],
+  );
+  const serverReviews: SDKReview[] = useMemo(() => reviewsData?.reviews ?? [], [reviewsData]);
+  const serverIncomingRequests: IncomingRequest[] = useMemo(() => incomingData?.lendingRequests ?? [], [incomingData]);
+  const serverOutgoingRequests: OutgoingRequest[] = useMemo(() => outgoingData?.lendingRequests ?? [], [outgoingData]);
+
+  const [myListings, setMyListings] = useState<Listing[]>([]);
+  const [myReviews, setMyReviews] = useState<SDKReview[]>([]);
+  const [incomingRequests, setIncomingRequests] = useState<IncomingRequest[]>([]);
+  const [outgoingRequests, setOutgoingRequests] = useState<OutgoingRequest[]>([]);
+
+  useEffect(() => {
+    setMyListings(serverListings);
+  }, [serverListings]);
+
+  useEffect(() => {
+    setMyReviews(serverReviews);
+  }, [serverReviews]);
+
+  useEffect(() => {
+    setIncomingRequests(serverIncomingRequests);
+  }, [serverIncomingRequests]);
+
+  useEffect(() => {
+    setOutgoingRequests(serverOutgoingRequests);
+  }, [serverOutgoingRequests]);
 
   const averageRating = useMemo(() => {
-    if (myReviews.length === 0) return null;
+    if (myReviews.length === 0) return undefined;
     const total = myReviews.reduce((sum, r) => sum + r.rating, 0);
-    return (total / myReviews.length).toFixed(1);
+    return total / myReviews.length;
   }, [myReviews]);
 
   const [editingListing, setEditingListing] = useState<Listing | null>(null);
@@ -79,6 +106,7 @@ export const AccountPage = () => {
     title: '', description: '', price: 0, locationDetails: '', category: 'Tools', imageUrl: '',
   });
   const [imagePreview, setImagePreview] = useState('');
+  const [actionError, setActionError] = useState('');
 
   const handleEditClick = (listing: Listing) => {
     setEditingListing(listing);
@@ -104,20 +132,126 @@ export const AccountPage = () => {
   const handleEditSubmit = async (event: { preventDefault(): void }) => {
     event.preventDefault();
     if (!editingListing) return;
-    await updateItem({
-      id: editingListing.id,
+
+    setActionError('');
+
+    const previousListings = myListings;
+    const previousEditingListing = editingListing;
+    const updatedListing: Listing = {
+      ...editingListing,
       title: editValues.title,
       description: editValues.description,
       price: editValues.price,
-      imageUrl: editValues.imageUrl || imagePreview || null,
+      imageUrl: editValues.imageUrl || imagePreview || '',
       locationDetails: editValues.locationDetails,
       category: editValues.category,
-    });
-    await queryClient.invalidateQueries();
+    };
+
+    setMyListings((current) =>
+      current.map((listing) => (listing.id === editingListing.id ? updatedListing : listing)),
+    );
     setEditingListing(null);
+
+    try {
+      await updateItem({
+        id: editingListing.id,
+        title: editValues.title,
+        description: editValues.description,
+        price: editValues.price,
+        imageUrl: editValues.imageUrl || imagePreview || null,
+        locationDetails: editValues.locationDetails,
+        category: editValues.category,
+      });
+    } catch {
+      setMyListings(previousListings);
+      setEditingListing(previousEditingListing);
+      setActionError('Could not save your changes. Please try again.');
+    }
   };
 
-  const invalidate = () => queryClient.invalidateQueries();
+  const handleIncomingStatusChange = async (requestId: string, status: string) => {
+    setActionError('');
+    const previousRequests = incomingRequests;
+
+    setIncomingRequests((current) =>
+      current.map((req) => (req.id === requestId ? { ...req, status } : req)),
+    );
+
+    try {
+      await updateLendingRequestStatus({ id: requestId, status });
+    } catch {
+      setIncomingRequests(previousRequests);
+      setActionError('Could not update that request. Please try again.');
+    }
+  };
+
+  const handleOutgoingStatusChange = async (requestId: string, status: string) => {
+    setActionError('');
+    const previousRequests = outgoingRequests;
+
+    setOutgoingRequests((current) =>
+      current.map((req) => (req.id === requestId ? { ...req, status } : req)),
+    );
+
+    try {
+      await updateLendingRequestStatus({ id: requestId, status });
+    } catch {
+      setOutgoingRequests(previousRequests);
+      setActionError('Could not update that request. Please try again.');
+    }
+  };
+
+  const handleToggleAvailability = async (listing: Listing) => {
+    setActionError('');
+    const previousListings = myListings;
+    const nextStatus: Listing['status'] = listing.status === 'available' ? 'unavailable' : 'available';
+
+    setMyListings((current) =>
+      current.map((item) => (item.id === listing.id ? { ...item, status: nextStatus } : item)),
+    );
+
+    try {
+      await updateItemStatus({ id: listing.id, status: nextStatus });
+    } catch {
+      setMyListings(previousListings);
+      setActionError('Could not update availability. Please try again.');
+    }
+  };
+
+  const handleDeleteListing = async (listingId: string) => {
+    setActionError('');
+    const previousListings = myListings;
+
+    setMyListings((current) => current.filter((listing) => listing.id !== listingId));
+
+    try {
+      await deleteItem({ id: listingId });
+    } catch {
+      setMyListings(previousListings);
+      setActionError('Could not delete that listing. Please try again.');
+    }
+  };
+
+  const handleReviewSubmitted = (review: { reviewedUserName: string; rating: number; comment: string }) => {
+    if (!currentUser?.displayName) return undefined;
+    if (review.reviewedUserName.trim().toLowerCase() !== currentUser.displayName.trim().toLowerCase()) return undefined;
+
+    setActionError('');
+
+    const newReview = {
+      id: `local-${Date.now()}`,
+      rating: review.rating,
+      comment: review.comment,
+      reviewer: { displayName: currentUser.displayName },
+    } as SDKReview;
+
+    setMyReviews((current) => [newReview, ...current]);
+
+    return () => {
+      setMyReviews((current) => current.filter((existingReview) => existingReview.id !== newReview.id));
+      setActionError('Could not submit your review. Please try again.');
+    };
+  };
 
   if (!currentUser) {
     return (
@@ -160,6 +294,7 @@ export const AccountPage = () => {
             </button>
           </div>
           <p className="mt-2 text-sm text-slate-600">Manage your listings and keep your trust profile strong.</p>
+          {actionError ? <p className="mt-3 text-sm text-red-600">{actionError}</p> : null}
 
           <div className="mt-6 grid gap-4 sm:grid-cols-3">
             <div className="rounded-2xl bg-slate-50 p-4">
@@ -172,15 +307,14 @@ export const AccountPage = () => {
             </div>
             <div className="rounded-2xl bg-slate-50 p-4">
               <p className="text-sm text-slate-500">Average rating</p>
-              <p className="mt-2 text-2xl font-bold text-slate-900">{averageRating ?? '—'}</p>
+              <p className="mt-2 text-2xl font-bold text-slate-900">{averageRating?.toFixed(1) ?? '—'}</p>
             </div>
           </div>
         </div>
 
-        <ReviewForm />
+        <ReviewForm onReviewSubmitted={handleReviewSubmitted} />
       </section>
 
-      {/* Incoming requests */}
       {incomingRequests.length > 0 ? (
         <section className="mt-8 rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
           <h2 className="text-xl font-semibold text-slate-900">Incoming borrow requests</h2>
@@ -204,11 +338,11 @@ export const AccountPage = () => {
                 </div>
                 {req.status === 'pending' ? (
                   <div className="mt-3 flex gap-3">
-                    <button type="button" onClick={async () => { await updateLendingRequestStatus({ id: req.id, status: 'accepted' }); invalidate(); }}
+                    <button type="button" onClick={() => handleIncomingStatusChange(req.id, 'accepted')}
                       className="rounded-2xl bg-emerald-600 px-4 py-2 text-sm font-semibold text-white hover:bg-emerald-700">
                       Accept
                     </button>
-                    <button type="button" onClick={async () => { await updateLendingRequestStatus({ id: req.id, status: 'rejected' }); invalidate(); }}
+                    <button type="button" onClick={() => handleIncomingStatusChange(req.id, 'rejected')}
                       className="rounded-2xl border border-red-200 bg-red-50 px-4 py-2 text-sm font-semibold text-red-700 hover:bg-red-100">
                       Reject
                     </button>
@@ -216,7 +350,7 @@ export const AccountPage = () => {
                 ) : null}
                 {req.status === 'accepted' ? (
                   <div className="mt-3">
-                    <button type="button" onClick={async () => { await updateLendingRequestStatus({ id: req.id, status: 'completed' }); invalidate(); }}
+                    <button type="button" onClick={() => handleIncomingStatusChange(req.id, 'completed')}
                       className="rounded-2xl border border-sky-200 bg-sky-50 px-4 py-2 text-sm font-semibold text-sky-700 hover:bg-sky-100">
                       Mark completed
                     </button>
@@ -228,7 +362,6 @@ export const AccountPage = () => {
         </section>
       ) : null}
 
-      {/* Outgoing requests */}
       {outgoingRequests.length > 0 ? (
         <section className="mt-8 rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
           <h2 className="text-xl font-semibold text-slate-900">Your borrow requests</h2>
@@ -251,7 +384,7 @@ export const AccountPage = () => {
                 </div>
                 {req.status === 'pending' ? (
                   <div className="mt-3">
-                    <button type="button" onClick={async () => { await updateLendingRequestStatus({ id: req.id, status: 'cancelled' }); invalidate(); }}
+                    <button type="button" onClick={() => handleOutgoingStatusChange(req.id, 'cancelled')}
                       className="rounded-2xl border border-slate-300 px-4 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50">
                       Cancel request
                     </button>
@@ -263,7 +396,6 @@ export const AccountPage = () => {
         </section>
       ) : null}
 
-      {/* My listings */}
       <section className="mt-8">
         <div className="flex items-center justify-between gap-4">
           <h2 className="text-xl font-semibold text-slate-900">Your listings</h2>
@@ -336,20 +468,17 @@ export const AccountPage = () => {
                   </form>
                 ) : (
                   <>
-                    <ListingCard listing={listing} />
+                    <ListingCard listing={listing} ownerRating={averageRating} />
                     <div className="grid gap-3 sm:grid-cols-3">
                       <button type="button" onClick={() => handleEditClick(listing)}
                         className="rounded-2xl border border-slate-300 px-4 py-3 text-sm font-semibold text-slate-700 hover:bg-slate-50">
                         Edit details
                       </button>
-                      <button type="button" onClick={async () => {
-                          await updateItemStatus({ id: listing.id, status: listing.status === 'available' ? 'unavailable' : 'available' });
-                          invalidate();
-                        }}
+                      <button type="button" onClick={() => handleToggleAvailability(listing)}
                         className="rounded-2xl border border-slate-300 px-4 py-3 text-sm font-semibold text-slate-700 hover:bg-slate-50">
                         Mark {listing.status === 'available' ? 'unavailable' : 'available'}
                       </button>
-                      <button type="button" onClick={async () => { await deleteItem({ id: listing.id }); invalidate(); }}
+                      <button type="button" onClick={() => handleDeleteListing(listing.id)}
                         className="rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm font-semibold text-red-700 hover:bg-red-100">
                         Delete
                       </button>
@@ -362,7 +491,6 @@ export const AccountPage = () => {
         )}
       </section>
 
-      {/* Reviews */}
       <section className="mt-8 rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
         <h2 className="text-xl font-semibold text-slate-900">Recent reviews</h2>
         {myReviews.length === 0 ? (

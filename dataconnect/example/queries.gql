@@ -9,6 +9,8 @@ query ListItems @auth(level: PUBLIC) {
     imageUrl
     locationDetails
     category
+    meetupLocationType
+    meetupLocationDetails
     lender {
       uid
       displayName
@@ -28,6 +30,8 @@ query GetItem($id: UUID!) @auth(level: PUBLIC) {
     imageUrl
     locationDetails
     category
+    meetupLocationType
+    meetupLocationDetails
     lender {
       uid
       displayName
@@ -47,6 +51,8 @@ query ListMyItems @auth(level: USER) {
     imageUrl
     locationDetails
     category
+    meetupLocationType
+    meetupLocationDetails
   }
 }
 

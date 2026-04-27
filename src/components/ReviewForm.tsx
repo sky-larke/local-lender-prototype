@@ -4,7 +4,15 @@ import { useCreateReview, useUpdateUserRating } from '../dataconnect/react';
 import { findUserByDisplayName } from '../dataconnect';
 import { useAppContext } from '../context/AppContext';
 
-export const ReviewForm = () => {
+interface ReviewFormProps {
+  onReviewSubmitted?: (review: {
+    reviewedUserName: string;
+    rating: number;
+    comment: string;
+  }) => void | (() => void);
+}
+
+export const ReviewForm = ({ onReviewSubmitted }: ReviewFormProps) => {
   const { currentUser } = useAppContext();
   const queryClient = useQueryClient();
   const { mutateAsync: createReview, isPending } = useCreateReview();
@@ -19,29 +27,48 @@ export const ReviewForm = () => {
   const handleSubmit = async (event: { preventDefault(): void }) => {
     event.preventDefault();
     setError('');
+    setStatus('');
 
-    const { data } = await findUserByDisplayName({ displayName: reviewedUserName });
+    const submittedReview = {
+      reviewedUserName: reviewedUserName.trim(),
+      rating,
+      comment,
+    };
+
+    const { data } = await findUserByDisplayName({ displayName: submittedReview.reviewedUserName });
     const match = data?.users?.[0];
 
     if (!match) {
-      setError(`No user found with the name "${reviewedUserName}". They must have signed in at least once.`);
+      setError(`No user found with the name "${submittedReview.reviewedUserName}". They must have signed in at least once.`);
       return;
     }
 
-    await createReview({ reviewedUserUid: match.uid, rating, comment });
+    if (match.uid === currentUser?.uid) {
+      setError("You can't submit a review for yourself.");
+      return;
+    }
 
-    // Incrementally update stored average — no recalculation needed on read
-    const oldCount = match.reviewCount ?? 0;
-    const oldAvg = match.averageRating ?? 0;
-    const newCount = oldCount + 1;
-    const newAvg = (oldAvg * oldCount + rating) / newCount;
-    await updateUserRating({ uid: match.uid, averageRating: newAvg, reviewCount: newCount });
+    const rollback = onReviewSubmitted?.(submittedReview);
 
-    await queryClient.invalidateQueries();
-    setReviewedUserName('');
-    setComment('');
-    setRating(5);
-    setStatus('Review submitted.');
+    try {
+      await createReview({ reviewedUserUid: match.uid, rating: submittedReview.rating, comment: submittedReview.comment });
+
+      // Incrementally update stored average — no recalculation needed on read
+      const oldCount = match.reviewCount ?? 0;
+      const oldAvg = match.averageRating ?? 0;
+      const newCount = oldCount + 1;
+      const newAvg = (oldAvg * oldCount + submittedReview.rating) / newCount;
+      await updateUserRating({ uid: match.uid, averageRating: newAvg, reviewCount: newCount });
+
+      await queryClient.invalidateQueries();
+      setReviewedUserName('');
+      setComment('');
+      setRating(5);
+      setStatus('Review submitted.');
+    } catch {
+      rollback?.();
+      setError('Could not submit your review. Please try again.');
+    }
   };
 
   if (!currentUser) return null;

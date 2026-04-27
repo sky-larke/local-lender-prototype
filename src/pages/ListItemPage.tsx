@@ -21,6 +21,7 @@ export const ListItemPage = () => {
   const { mutateAsync: createItem, isPending } = useCreateItem();
 
   const [values, setValues] = useState<ListingFormValues>(initialValues);
+  const [cents, setCents] = useState(0); // track cents for price shifting
   const [imagePreview, setImagePreview] = useState('');
   const [submitError, setSubmitError] = useState('');
 
@@ -46,15 +47,12 @@ export const ListItemPage = () => {
   const handleSubmit = async (event: { preventDefault(): void }) => {
     event.preventDefault();
     setSubmitError('');
+    const finalValues = {
+      ...values,
+      price: cents / 100
+    };
     try {
-      await createItem({
-        title: values.title,
-        description: values.description,
-        price: values.price,
-        imageUrl: values.imageUrl || imagePreview || null,
-        locationDetails: values.locationDetails,
-        category: values.category,
-      });
+      await createItem(finalValues);
       await queryClient.invalidateQueries();
       navigate('/');
     } catch (err) {
@@ -98,14 +96,23 @@ export const ListItemPage = () => {
           <div className="grid gap-4 sm:grid-cols-2">
             <label className="block text-sm font-medium text-slate-700">
               Price per day
-              <input
-                required
-                min={0}
-                type="number"
-                value={values.price}
-                onChange={(e) => handleChange('price', Number(e.target.value))}
-                className="mt-2 w-full rounded-2xl border border-slate-300 px-4 py-3"
-              />
+            <input
+              type="text"
+              inputMode="numeric"
+              value={(cents / 100).toFixed(2)}
+              onKeyDown={(e) => {
+                if (e.key >= '0' && e.key <= '9') {
+                  e.preventDefault();
+                  setCents(prev => prev * 10 + Number(e.key));
+                }
+
+                if (e.key === 'Backspace') {
+                  e.preventDefault();
+                  setCents(prev => Math.floor(prev / 10));
+                }
+              }}
+              className="mt-2 w-full rounded-2xl border border-slate-300 px-4 py-3"
+            />
             </label>
 
             <label className="block text-sm font-medium text-slate-700">
@@ -139,6 +146,7 @@ export const ListItemPage = () => {
           <label className="block text-sm font-medium text-slate-700">
             Photo
             <input
+              required
               type="file"
               accept="image/*"
               onChange={handleImageChange}

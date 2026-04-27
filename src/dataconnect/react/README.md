@@ -158,6 +158,8 @@ export interface ListItemsData {
     imageUrl?: string | null;
     locationDetails?: string | null;
     category?: string | null;
+    meetupLocationType?: string | null;
+    meetupLocationDetails?: string | null;
     lender?: {
       uid: string;
       displayName: string;
@@ -248,6 +250,8 @@ export interface GetItemData {
     imageUrl?: string | null;
     locationDetails?: string | null;
     category?: string | null;
+    meetupLocationType?: string | null;
+    meetupLocationDetails?: string | null;
     lender?: {
       uid: string;
       displayName: string;
@@ -339,6 +343,8 @@ export interface ListMyItemsData {
     imageUrl?: string | null;
     locationDetails?: string | null;
     category?: string | null;
+    meetupLocationType?: string | null;
+    meetupLocationDetails?: string | null;
   } & Item_Key)[];
 }
 ```
