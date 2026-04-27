@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
-import { useCreateReview } from '../dataconnect/react';
+import { useCreateReview, useUpdateUserRating } from '../dataconnect/react';
 import { findUserByDisplayName } from '../dataconnect';
 import { useAppContext } from '../context/AppContext';
 
@@ -8,6 +8,7 @@ export const ReviewForm = () => {
   const { currentUser } = useAppContext();
   const queryClient = useQueryClient();
   const { mutateAsync: createReview, isPending } = useCreateReview();
+  const { mutateAsync: updateUserRating } = useUpdateUserRating();
 
   const [reviewedUserName, setReviewedUserName] = useState('');
   const [rating, setRating] = useState(5);
@@ -28,6 +29,14 @@ export const ReviewForm = () => {
     }
 
     await createReview({ reviewedUserUid: match.uid, rating, comment });
+
+    // Incrementally update stored average — no recalculation needed on read
+    const oldCount = match.reviewCount ?? 0;
+    const oldAvg = match.averageRating ?? 0;
+    const newCount = oldCount + 1;
+    const newAvg = (oldAvg * oldCount + rating) / newCount;
+    await updateUserRating({ uid: match.uid, averageRating: newAvg, reviewCount: newCount });
+
     await queryClient.invalidateQueries();
     setReviewedUserName('');
     setComment('');

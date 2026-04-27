@@ -18,6 +18,7 @@ This README will guide you through the process of using the generated JavaScript
   - [*ListMyReviews*](#listmyreviews)
   - [*GetCurrentUser*](#getcurrentuser)
   - [*FindUserByDisplayName*](#finduserbydisplayname)
+  - [*ListReviews*](#listreviews)
 - [**Mutations**](#mutations)
   - [*UpsertUser*](#upsertuser)
   - [*CreateItem*](#createitem)
@@ -26,6 +27,7 @@ This README will guide you through the process of using the generated JavaScript
   - [*DeleteItem*](#deleteitem)
   - [*CreateLendingRequest*](#createlendingrequest)
   - [*UpdateLendingRequestStatus*](#updatelendingrequeststatus)
+  - [*UpdateUserRating*](#updateuserrating)
   - [*CreateReview*](#createreview)
 
 # Accessing the connector
@@ -757,6 +759,8 @@ export interface GetCurrentUserData {
     photoUrl?: string | null;
     location?: string | null;
     createdAt: TimestampString;
+    averageRating?: number | null;
+    reviewCount?: number | null;
   } & User_Key)[];
 }
 ```
@@ -857,6 +861,8 @@ export interface FindUserByDisplayNameData {
   users: ({
     uid: string;
     displayName: string;
+    averageRating?: number | null;
+    reviewCount?: number | null;
   } & User_Key)[];
 }
 ```
@@ -920,6 +926,107 @@ console.log(data.users);
 executeQuery(ref).then((response) => {
   const data = response.data;
   console.log(data.users);
+});
+```
+
+## ListReviews
+You can execute the `ListReviews` query using the following action shortcut function, or by calling `executeQuery()` after calling the following `QueryRef` function, both of which are defined in [dataconnect/index.d.ts](./index.d.ts):
+```typescript
+listReviews(options?: ExecuteQueryOptions): QueryPromise<ListReviewsData, undefined>;
+
+interface ListReviewsRef {
+  ...
+  /* Allow users to create refs without passing in DataConnect */
+  (): QueryRef<ListReviewsData, undefined>;
+}
+export const listReviewsRef: ListReviewsRef;
+```
+You can also pass in a `DataConnect` instance to the action shortcut function or `QueryRef` function.
+```typescript
+listReviews(dc: DataConnect, options?: ExecuteQueryOptions): QueryPromise<ListReviewsData, undefined>;
+
+interface ListReviewsRef {
+  ...
+  (dc: DataConnect): QueryRef<ListReviewsData, undefined>;
+}
+export const listReviewsRef: ListReviewsRef;
+```
+
+If you need the name of the operation without creating a ref, you can retrieve the operation name by calling the `operationName` property on the listReviewsRef:
+```typescript
+const name = listReviewsRef.operationName;
+console.log(name);
+```
+
+### Variables
+The `ListReviews` query has no variables.
+### Return Type
+Recall that executing the `ListReviews` query returns a `QueryPromise` that resolves to an object with a `data` property.
+
+The `data` property is an object of type `ListReviewsData`, which is defined in [dataconnect/index.d.ts](./index.d.ts). It has the following fields:
+```typescript
+export interface ListReviewsData {
+  reviews: ({
+    id: UUIDString;
+    rating: number;
+    comment: string;
+    reviewedUser?: {
+      uid: string;
+      displayName: string;
+      averageRating?: number | null;
+      reviewCount?: number | null;
+    } & User_Key;
+  } & Review_Key)[];
+}
+```
+### Using `ListReviews`'s action shortcut function
+
+```typescript
+import { getDataConnect } from 'firebase/data-connect';
+import { connectorConfig, listReviews } from '@local-lender/dataconnect';
+
+
+// Call the `listReviews()` function to execute the query.
+// You can use the `await` keyword to wait for the promise to resolve.
+const { data } = await listReviews();
+
+// You can also pass in a `DataConnect` instance to the action shortcut function.
+const dataConnect = getDataConnect(connectorConfig);
+const { data } = await listReviews(dataConnect);
+
+console.log(data.reviews);
+
+// Or, you can use the `Promise` API.
+listReviews().then((response) => {
+  const data = response.data;
+  console.log(data.reviews);
+});
+```
+
+### Using `ListReviews`'s `QueryRef` function
+
+```typescript
+import { getDataConnect, executeQuery } from 'firebase/data-connect';
+import { connectorConfig, listReviewsRef } from '@local-lender/dataconnect';
+
+
+// Call the `listReviewsRef()` function to get a reference to the query.
+const ref = listReviewsRef();
+
+// You can also pass in a `DataConnect` instance to the `QueryRef` function.
+const dataConnect = getDataConnect(connectorConfig);
+const ref = listReviewsRef(dataConnect);
+
+// Call `executeQuery()` on the reference to execute the query.
+// You can use the `await` keyword to wait for the promise to resolve.
+const { data } = await executeQuery(ref);
+
+console.log(data.reviews);
+
+// Or, you can use the `Promise` API.
+executeQuery(ref).then((response) => {
+  const data = response.data;
+  console.log(data.reviews);
 });
 ```
 
@@ -1755,6 +1862,121 @@ console.log(data.lendingRequest_update);
 executeMutation(ref).then((response) => {
   const data = response.data;
   console.log(data.lendingRequest_update);
+});
+```
+
+## UpdateUserRating
+You can execute the `UpdateUserRating` mutation using the following action shortcut function, or by calling `executeMutation()` after calling the following `MutationRef` function, both of which are defined in [dataconnect/index.d.ts](./index.d.ts):
+```typescript
+updateUserRating(vars: UpdateUserRatingVariables): MutationPromise<UpdateUserRatingData, UpdateUserRatingVariables>;
+
+interface UpdateUserRatingRef {
+  ...
+  /* Allow users to create refs without passing in DataConnect */
+  (vars: UpdateUserRatingVariables): MutationRef<UpdateUserRatingData, UpdateUserRatingVariables>;
+}
+export const updateUserRatingRef: UpdateUserRatingRef;
+```
+You can also pass in a `DataConnect` instance to the action shortcut function or `MutationRef` function.
+```typescript
+updateUserRating(dc: DataConnect, vars: UpdateUserRatingVariables): MutationPromise<UpdateUserRatingData, UpdateUserRatingVariables>;
+
+interface UpdateUserRatingRef {
+  ...
+  (dc: DataConnect, vars: UpdateUserRatingVariables): MutationRef<UpdateUserRatingData, UpdateUserRatingVariables>;
+}
+export const updateUserRatingRef: UpdateUserRatingRef;
+```
+
+If you need the name of the operation without creating a ref, you can retrieve the operation name by calling the `operationName` property on the updateUserRatingRef:
+```typescript
+const name = updateUserRatingRef.operationName;
+console.log(name);
+```
+
+### Variables
+The `UpdateUserRating` mutation requires an argument of type `UpdateUserRatingVariables`, which is defined in [dataconnect/index.d.ts](./index.d.ts). It has the following fields:
+
+```typescript
+export interface UpdateUserRatingVariables {
+  uid: string;
+  averageRating: number;
+  reviewCount: number;
+}
+```
+### Return Type
+Recall that executing the `UpdateUserRating` mutation returns a `MutationPromise` that resolves to an object with a `data` property.
+
+The `data` property is an object of type `UpdateUserRatingData`, which is defined in [dataconnect/index.d.ts](./index.d.ts). It has the following fields:
+```typescript
+export interface UpdateUserRatingData {
+  user_update?: User_Key | null;
+}
+```
+### Using `UpdateUserRating`'s action shortcut function
+
+```typescript
+import { getDataConnect } from 'firebase/data-connect';
+import { connectorConfig, updateUserRating, UpdateUserRatingVariables } from '@local-lender/dataconnect';
+
+// The `UpdateUserRating` mutation requires an argument of type `UpdateUserRatingVariables`:
+const updateUserRatingVars: UpdateUserRatingVariables = {
+  uid: ..., 
+  averageRating: ..., 
+  reviewCount: ..., 
+};
+
+// Call the `updateUserRating()` function to execute the mutation.
+// You can use the `await` keyword to wait for the promise to resolve.
+const { data } = await updateUserRating(updateUserRatingVars);
+// Variables can be defined inline as well.
+const { data } = await updateUserRating({ uid: ..., averageRating: ..., reviewCount: ..., });
+
+// You can also pass in a `DataConnect` instance to the action shortcut function.
+const dataConnect = getDataConnect(connectorConfig);
+const { data } = await updateUserRating(dataConnect, updateUserRatingVars);
+
+console.log(data.user_update);
+
+// Or, you can use the `Promise` API.
+updateUserRating(updateUserRatingVars).then((response) => {
+  const data = response.data;
+  console.log(data.user_update);
+});
+```
+
+### Using `UpdateUserRating`'s `MutationRef` function
+
+```typescript
+import { getDataConnect, executeMutation } from 'firebase/data-connect';
+import { connectorConfig, updateUserRatingRef, UpdateUserRatingVariables } from '@local-lender/dataconnect';
+
+// The `UpdateUserRating` mutation requires an argument of type `UpdateUserRatingVariables`:
+const updateUserRatingVars: UpdateUserRatingVariables = {
+  uid: ..., 
+  averageRating: ..., 
+  reviewCount: ..., 
+};
+
+// Call the `updateUserRatingRef()` function to get a reference to the mutation.
+const ref = updateUserRatingRef(updateUserRatingVars);
+// Variables can be defined inline as well.
+const ref = updateUserRatingRef({ uid: ..., averageRating: ..., reviewCount: ..., });
+
+// You can also pass in a `DataConnect` instance to the `MutationRef` function.
+const dataConnect = getDataConnect(connectorConfig);
+const ref = updateUserRatingRef(dataConnect, updateUserRatingVars);
+
+// Call `executeMutation()` on the reference to execute the mutation.
+// You can use the `await` keyword to wait for the promise to resolve.
+const { data } = await executeMutation(ref);
+
+console.log(data.user_update);
+
+// Or, you can use the `Promise` API.
+executeMutation(ref).then((response) => {
+  const data = response.data;
+  console.log(data.user_update);
 });
 ```
 

@@ -5,6 +5,8 @@ type User @table(key: "uid") {
   createdAt: Timestamp!
   photoUrl: String
   location: String
+  averageRating: Float
+  reviewCount: Int
 }
 
 type Item @table {
