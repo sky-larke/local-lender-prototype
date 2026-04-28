@@ -462,6 +462,7 @@ export interface ListIncomingRequestsData {
     item?: {
       id: UUIDString;
       title: string;
+      price?: number | null;
     } & Item_Key;
       borrower?: {
         uid: string;
@@ -568,6 +569,11 @@ export interface ListOutgoingRequestsData {
     item?: {
       id: UUIDString;
       title: string;
+      price?: number | null;
+      lender?: {
+        uid: string;
+        displayName: string;
+      } & User_Key;
     } & Item_Key;
   } & LendingRequest_Key)[];
 }
@@ -1337,7 +1343,7 @@ export interface UpdateItemVariables {
   imageUrl?: string | null;
   locationDetails?: string | null;
   category?: string | null;
-  condition: string;
+  condition?: string | null;
 }
 ```
 ### Return Type
@@ -1364,7 +1370,7 @@ const updateItemVars: UpdateItemVariables = {
   imageUrl: ..., // optional
   locationDetails: ..., // optional
   category: ..., // optional
-  condition: ..., 
+  condition: ..., // optional
 };
 
 // Call the `updateItem()` function to execute the mutation.
@@ -1401,7 +1407,7 @@ const updateItemVars: UpdateItemVariables = {
   imageUrl: ..., // optional
   locationDetails: ..., // optional
   category: ..., // optional
-  condition: ..., 
+  condition: ..., // optional
 };
 
 // Call the `updateItemRef()` function to get a reference to the mutation.

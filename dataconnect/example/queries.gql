@@ -73,6 +73,7 @@ query ListIncomingRequests @auth(level: USER) {
     item {
       id
       title
+      price
     }
     borrower {
       uid
@@ -95,6 +96,11 @@ query ListOutgoingRequests @auth(level: USER) {
     item {
       id
       title
+      price
+      lender {
+        uid
+        displayName
+      }
     }
   }
 }
