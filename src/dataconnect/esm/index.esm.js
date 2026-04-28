@@ -89,6 +89,18 @@ export function updateLendingRequestStatus(dcOrVars, vars) {
   return executeMutation(updateLendingRequestStatusRef(dcInstance, inputVars));
 }
 
+export const updateUserRatingRef = (dcOrVars, vars) => {
+  const { dc: dcInstance, vars: inputVars} = validateArgs(connectorConfig, dcOrVars, vars, true);
+  dcInstance._useGeneratedSdk();
+  return mutationRef(dcInstance, 'UpdateUserRating', inputVars);
+}
+updateUserRatingRef.operationName = 'UpdateUserRating';
+
+export function updateUserRating(dcOrVars, vars) {
+  const { dc: dcInstance, vars: inputVars } = validateArgs(connectorConfig, dcOrVars, vars, true);
+  return executeMutation(updateUserRatingRef(dcInstance, inputVars));
+}
+
 export const createReviewRef = (dcOrVars, vars) => {
   const { dc: dcInstance, vars: inputVars} = validateArgs(connectorConfig, dcOrVars, vars, true);
   dcInstance._useGeneratedSdk();
@@ -179,19 +191,6 @@ export function listMyReviews(dcOrOptions, options) {
   return executeQuery(listMyReviewsRef(dcInstance, inputVars), inputOpts && inputOpts.fetchPolicy);
 }
 
-export const listReviewsRef = (dc) => {
-  const { dc: dcInstance} = validateArgs(connectorConfig, dc, undefined);
-  dcInstance._useGeneratedSdk();
-  return queryRef(dcInstance, 'ListReviews');
-}
-listReviewsRef.operationName = 'ListReviews';
-
-export function listReviews(dcOrOptions, options) {
-  
-  const { dc: dcInstance, vars: inputVars, options: inputOpts } = validateArgsWithOptions(connectorConfig, dcOrOptions, options, undefined,false, false);
-  return executeQuery(listReviewsRef(dcInstance, inputVars), inputOpts && inputOpts.fetchPolicy);
-}
-
 export const getCurrentUserRef = (dc) => {
   const { dc: dcInstance} = validateArgs(connectorConfig, dc, undefined);
   dcInstance._useGeneratedSdk();
@@ -216,5 +215,18 @@ export function findUserByDisplayName(dcOrVars, varsOrOptions, options) {
   
   const { dc: dcInstance, vars: inputVars, options: inputOpts } = validateArgsWithOptions(connectorConfig, dcOrVars, varsOrOptions, options, true, true);
   return executeQuery(findUserByDisplayNameRef(dcInstance, inputVars), inputOpts && inputOpts.fetchPolicy);
+}
+
+export const listReviewsRef = (dc) => {
+  const { dc: dcInstance} = validateArgs(connectorConfig, dc, undefined);
+  dcInstance._useGeneratedSdk();
+  return queryRef(dcInstance, 'ListReviews');
+}
+listReviewsRef.operationName = 'ListReviews';
+
+export function listReviews(dcOrOptions, options) {
+  
+  const { dc: dcInstance, vars: inputVars, options: inputOpts } = validateArgsWithOptions(connectorConfig, dcOrOptions, options, undefined,false, false);
+  return executeQuery(listReviewsRef(dcInstance, inputVars), inputOpts && inputOpts.fetchPolicy);
 }
 

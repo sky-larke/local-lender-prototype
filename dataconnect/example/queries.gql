@@ -113,18 +113,6 @@ query ListMyReviews @auth(level: USER) {
   }
 }
 
-query ListReviews @auth(level: PUBLIC) {
-  reviews(orderBy: [{ createdAt: DESC }]) {
-    id
-    rating
-    comment
-    reviewedUser {
-      uid
-      displayName
-    }
-  }
-}
-
 query GetCurrentUser @auth(level: USER) {
   users(where: { uid: { eq_expr: "auth.uid" } }) {
     uid
@@ -133,6 +121,8 @@ query GetCurrentUser @auth(level: USER) {
     photoUrl
     location
     createdAt
+    averageRating
+    reviewCount
   }
 }
 
@@ -140,5 +130,21 @@ query FindUserByDisplayName($displayName: String!) @auth(level: USER) {
   users(where: { displayName: { eq: $displayName } }) {
     uid
     displayName
+    averageRating
+    reviewCount
+  }
+}
+
+query ListReviews @auth(level: PUBLIC) {
+  reviews {
+    id
+    rating
+    comment
+    reviewedUser {
+      uid
+      displayName
+      averageRating
+      reviewCount
+    }
   }
 }

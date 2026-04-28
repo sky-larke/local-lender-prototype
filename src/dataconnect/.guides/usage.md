@@ -12,7 +12,7 @@ For each operation, there is a wrapper hook that can be used to call the operati
 
 Here are all of the hooks that get generated:
 ```ts
-import { useUpsertUser, useCreateItem, useUpdateItem, useUpdateItemStatus, useDeleteItem, useCreateLendingRequest, useUpdateLendingRequestStatus, useCreateReview, useListItems, useGetItem } from '@local-lender/dataconnect/react';
+import { useUpsertUser, useCreateItem, useUpdateItem, useUpdateItemStatus, useDeleteItem, useCreateLendingRequest, useUpdateLendingRequestStatus, useUpdateUserRating, useCreateReview, useListItems } from '@local-lender/dataconnect/react';
 // The types of these hooks are available in react/index.d.ts
 
 const { data, isPending, isSuccess, isError, error } = useUpsertUser(upsertUserVars);
@@ -29,11 +29,11 @@ const { data, isPending, isSuccess, isError, error } = useCreateLendingRequest(c
 
 const { data, isPending, isSuccess, isError, error } = useUpdateLendingRequestStatus(updateLendingRequestStatusVars);
 
+const { data, isPending, isSuccess, isError, error } = useUpdateUserRating(updateUserRatingVars);
+
 const { data, isPending, isSuccess, isError, error } = useCreateReview(createReviewVars);
 
 const { data, isPending, isSuccess, isError, error } = useListItems();
-
-const { data, isPending, isSuccess, isError, error } = useGetItem(getItemVars);
 
 ```
 
@@ -72,7 +72,7 @@ If a user is not using a supported framework, they can use the generated SDK dir
 Here's an example of how to use it with the first 5 operations:
 
 ```js
-import { upsertUser, createItem, updateItem, updateItemStatus, deleteItem, createLendingRequest, updateLendingRequestStatus, createReview, listItems, getItem } from '@local-lender/dataconnect';
+import { upsertUser, createItem, updateItem, updateItemStatus, deleteItem, createLendingRequest, updateLendingRequestStatus, updateUserRating, createReview, listItems } from '@local-lender/dataconnect';
 
 
 // Operation UpsertUser:  For variables, look at type UpsertUserVars in ../index.d.ts
@@ -96,14 +96,14 @@ const { data } = await CreateLendingRequest(dataConnect, createLendingRequestVar
 // Operation UpdateLendingRequestStatus:  For variables, look at type UpdateLendingRequestStatusVars in ../index.d.ts
 const { data } = await UpdateLendingRequestStatus(dataConnect, updateLendingRequestStatusVars);
 
+// Operation UpdateUserRating:  For variables, look at type UpdateUserRatingVars in ../index.d.ts
+const { data } = await UpdateUserRating(dataConnect, updateUserRatingVars);
+
 // Operation CreateReview:  For variables, look at type CreateReviewVars in ../index.d.ts
 const { data } = await CreateReview(dataConnect, createReviewVars);
 
 // Operation ListItems: 
 const { data } = await ListItems(dataConnect);
-
-// Operation GetItem:  For variables, look at type GetItemVars in ../index.d.ts
-const { data } = await GetItem(dataConnect, getItemVars);
 
 
 ```

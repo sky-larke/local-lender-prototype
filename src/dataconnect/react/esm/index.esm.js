@@ -1,4 +1,4 @@
-import { upsertUserRef, createItemRef, updateItemRef, updateItemStatusRef, deleteItemRef, createLendingRequestRef, updateLendingRequestStatusRef, createReviewRef, listItemsRef, getItemRef, listMyItemsRef, listIncomingRequestsRef, listOutgoingRequestsRef, listMyReviewsRef, listReviewsRef, getCurrentUserRef, findUserByDisplayNameRef, connectorConfig } from '../../esm/index.esm.js';
+import { upsertUserRef, createItemRef, updateItemRef, updateItemStatusRef, deleteItemRef, createLendingRequestRef, updateLendingRequestStatusRef, updateUserRatingRef, createReviewRef, listItemsRef, getItemRef, listMyItemsRef, listIncomingRequestsRef, listOutgoingRequestsRef, listMyReviewsRef, getCurrentUserRef, findUserByDisplayNameRef, listReviewsRef, connectorConfig } from '../../esm/index.esm.js';
 import { validateArgs, CallerSdkTypeEnum } from 'firebase/data-connect';
 import { useDataConnectQuery, useDataConnectMutation, validateReactArgs } from '@tanstack-query-firebase/react/data-connect';
 
@@ -58,6 +58,14 @@ export function useUpdateLendingRequestStatus(dcOrOptions, options) {
   return useDataConnectMutation(refFactory, inputOpts, CallerSdkTypeEnum.GeneratedReact);
 }
 
+export function useUpdateUserRating(dcOrOptions, options) {
+  const { dc: dcInstance, vars: inputOpts } = validateArgs(connectorConfig, dcOrOptions, options);
+  function refFactory(vars) {
+    return updateUserRatingRef(dcInstance, vars);
+  }
+  return useDataConnectMutation(refFactory, inputOpts, CallerSdkTypeEnum.GeneratedReact);
+}
+
 export function useCreateReview(dcOrOptions, options) {
   const { dc: dcInstance, vars: inputOpts } = validateArgs(connectorConfig, dcOrOptions, options);
   function refFactory(vars) {
@@ -103,12 +111,6 @@ export function useListMyReviews(dcOrOptions, options) {
   return useDataConnectQuery(ref, inputOpts, CallerSdkTypeEnum.GeneratedReact);
 }
 
-export function useListReviews(dcOrOptions, options) {
-  const { dc: dcInstance, options: inputOpts } = validateReactArgs(connectorConfig, dcOrOptions, options);
-  const ref = listReviewsRef(dcInstance);
-  return useDataConnectQuery(ref, inputOpts, CallerSdkTypeEnum.GeneratedReact);
-}
-
 export function useGetCurrentUser(dcOrOptions, options) {
   const { dc: dcInstance, options: inputOpts } = validateReactArgs(connectorConfig, dcOrOptions, options);
   const ref = getCurrentUserRef(dcInstance);
@@ -118,5 +120,11 @@ export function useGetCurrentUser(dcOrOptions, options) {
 export function useFindUserByDisplayName(dcOrVars, varsOrOptions, options) {
   const { dc: dcInstance, vars: inputVars, options: inputOpts } = validateReactArgs(connectorConfig, dcOrVars, varsOrOptions, options, true, true);
   const ref = findUserByDisplayNameRef(dcInstance, inputVars);
+  return useDataConnectQuery(ref, inputOpts, CallerSdkTypeEnum.GeneratedReact);
+}
+
+export function useListReviews(dcOrOptions, options) {
+  const { dc: dcInstance, options: inputOpts } = validateReactArgs(connectorConfig, dcOrOptions, options);
+  const ref = listReviewsRef(dcInstance);
   return useDataConnectQuery(ref, inputOpts, CallerSdkTypeEnum.GeneratedReact);
 }

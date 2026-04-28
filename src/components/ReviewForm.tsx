@@ -1,5 +1,6 @@
 import { useState } from 'react';
-import { useCreateReview } from '../dataconnect/react';
+import { useQueryClient } from '@tanstack/react-query';
+import { useCreateReview, useUpdateUserRating } from '../dataconnect/react';
 import { findUserByDisplayName } from '../dataconnect';
 import { useAppContext } from '../context/AppContext';
 
@@ -13,7 +14,9 @@ interface ReviewFormProps {
 
 export const ReviewForm = ({ onReviewSubmitted }: ReviewFormProps) => {
   const { currentUser } = useAppContext();
+  const queryClient = useQueryClient();
   const { mutateAsync: createReview, isPending } = useCreateReview();
+  const { mutateAsync: updateUserRating } = useUpdateUserRating();
 
   const [reviewedUserName, setReviewedUserName] = useState('');
   const [rating, setRating] = useState(5);
@@ -39,8 +42,7 @@ export const ReviewForm = ({ onReviewSubmitted }: ReviewFormProps) => {
       setError(`No user found with the name "${submittedReview.reviewedUserName}". They must have signed in at least once.`);
       return;
     }
-    
-    // self-review check
+
     if (match.uid === currentUser?.uid) {
       setError("You can't submit a review for yourself.");
       return;
@@ -50,6 +52,15 @@ export const ReviewForm = ({ onReviewSubmitted }: ReviewFormProps) => {
 
     try {
       await createReview({ reviewedUserUid: match.uid, rating: submittedReview.rating, comment: submittedReview.comment });
+
+      // Incrementally update stored average — no recalculation needed on read
+      const oldCount = match.reviewCount ?? 0;
+      const oldAvg = match.averageRating ?? 0;
+      const newCount = oldCount + 1;
+      const newAvg = (oldAvg * oldCount + submittedReview.rating) / newCount;
+      await updateUserRating({ uid: match.uid, averageRating: newAvg, reviewCount: newCount });
+
+      await queryClient.invalidateQueries();
       setReviewedUserName('');
       setComment('');
       setRating(5);

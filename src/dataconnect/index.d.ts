@@ -58,6 +58,8 @@ export interface FindUserByDisplayNameData {
   users: ({
     uid: string;
     displayName: string;
+    averageRating?: number | null;
+    reviewCount?: number | null;
   } & User_Key)[];
 }
 
@@ -73,6 +75,8 @@ export interface GetCurrentUserData {
     photoUrl?: string | null;
     location?: string | null;
     createdAt: TimestampString;
+    averageRating?: number | null;
+    reviewCount?: number | null;
   } & User_Key)[];
 }
 
@@ -204,6 +208,8 @@ export interface ListReviewsData {
     reviewedUser?: {
       uid: string;
       displayName: string;
+      averageRating?: number | null;
+      reviewCount?: number | null;
     } & User_Key;
   } & Review_Key)[];
 }
@@ -243,6 +249,16 @@ export interface UpdateLendingRequestStatusData {
 export interface UpdateLendingRequestStatusVariables {
   id: UUIDString;
   status: string;
+}
+
+export interface UpdateUserRatingData {
+  user_update?: User_Key | null;
+}
+
+export interface UpdateUserRatingVariables {
+  uid: string;
+  averageRating: number;
+  reviewCount: number;
 }
 
 export interface UpsertUserData {
@@ -344,6 +360,18 @@ export const updateLendingRequestStatusRef: UpdateLendingRequestStatusRef;
 export function updateLendingRequestStatus(vars: UpdateLendingRequestStatusVariables): MutationPromise<UpdateLendingRequestStatusData, UpdateLendingRequestStatusVariables>;
 export function updateLendingRequestStatus(dc: DataConnect, vars: UpdateLendingRequestStatusVariables): MutationPromise<UpdateLendingRequestStatusData, UpdateLendingRequestStatusVariables>;
 
+interface UpdateUserRatingRef {
+  /* Allow users to create refs without passing in DataConnect */
+  (vars: UpdateUserRatingVariables): MutationRef<UpdateUserRatingData, UpdateUserRatingVariables>;
+  /* Allow users to pass in custom DataConnect instances */
+  (dc: DataConnect, vars: UpdateUserRatingVariables): MutationRef<UpdateUserRatingData, UpdateUserRatingVariables>;
+  operationName: string;
+}
+export const updateUserRatingRef: UpdateUserRatingRef;
+
+export function updateUserRating(vars: UpdateUserRatingVariables): MutationPromise<UpdateUserRatingData, UpdateUserRatingVariables>;
+export function updateUserRating(dc: DataConnect, vars: UpdateUserRatingVariables): MutationPromise<UpdateUserRatingData, UpdateUserRatingVariables>;
+
 interface CreateReviewRef {
   /* Allow users to create refs without passing in DataConnect */
   (vars: CreateReviewVariables): MutationRef<CreateReviewData, CreateReviewVariables>;
@@ -428,18 +456,6 @@ export const listMyReviewsRef: ListMyReviewsRef;
 export function listMyReviews(options?: ExecuteQueryOptions): QueryPromise<ListMyReviewsData, undefined>;
 export function listMyReviews(dc: DataConnect, options?: ExecuteQueryOptions): QueryPromise<ListMyReviewsData, undefined>;
 
-interface ListReviewsRef {
-  /* Allow users to create refs without passing in DataConnect */
-  (): QueryRef<ListReviewsData, undefined>;
-  /* Allow users to pass in custom DataConnect instances */
-  (dc: DataConnect): QueryRef<ListReviewsData, undefined>;
-  operationName: string;
-}
-export const listReviewsRef: ListReviewsRef;
-
-export function listReviews(options?: ExecuteQueryOptions): QueryPromise<ListReviewsData, undefined>;
-export function listReviews(dc: DataConnect, options?: ExecuteQueryOptions): QueryPromise<ListReviewsData, undefined>;
-
 interface GetCurrentUserRef {
   /* Allow users to create refs without passing in DataConnect */
   (): QueryRef<GetCurrentUserData, undefined>;
@@ -463,4 +479,16 @@ export const findUserByDisplayNameRef: FindUserByDisplayNameRef;
 
 export function findUserByDisplayName(vars: FindUserByDisplayNameVariables, options?: ExecuteQueryOptions): QueryPromise<FindUserByDisplayNameData, FindUserByDisplayNameVariables>;
 export function findUserByDisplayName(dc: DataConnect, vars: FindUserByDisplayNameVariables, options?: ExecuteQueryOptions): QueryPromise<FindUserByDisplayNameData, FindUserByDisplayNameVariables>;
+
+interface ListReviewsRef {
+  /* Allow users to create refs without passing in DataConnect */
+  (): QueryRef<ListReviewsData, undefined>;
+  /* Allow users to pass in custom DataConnect instances */
+  (dc: DataConnect): QueryRef<ListReviewsData, undefined>;
+  operationName: string;
+}
+export const listReviewsRef: ListReviewsRef;
+
+export function listReviews(options?: ExecuteQueryOptions): QueryPromise<ListReviewsData, undefined>;
+export function listReviews(dc: DataConnect, options?: ExecuteQueryOptions): QueryPromise<ListReviewsData, undefined>;
 

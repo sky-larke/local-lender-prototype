@@ -79,6 +79,13 @@ mutation UpdateLendingRequestStatus($id: UUID!, $status: String!) @auth(level: U
   lendingRequest_update(id: $id, data: { status: $status })
 }
 
+mutation UpdateUserRating($uid: String!, $averageRating: Float!, $reviewCount: Int!) @auth(level: USER) {
+  user_update(key: { uid: $uid }, data: {
+    averageRating: $averageRating
+    reviewCount: $reviewCount
+  })
+}
+
 mutation CreateReview(
   $reviewedUserUid: String!
   $rating: Int!
