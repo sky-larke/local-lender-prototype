@@ -21,6 +21,12 @@ export const NavBar = () => {
           <NavLink to="/list-item" className={getLinkClassName}>
             List item
           </NavLink>
+          <NavLink to="/listings" className={getLinkClassName}>
+            My listings
+          </NavLink>
+          <NavLink to="/requests" className={getLinkClassName}>
+            Requests
+          </NavLink>
           <NavLink to="/account" className={getLinkClassName}>
             Account
           </NavLink>

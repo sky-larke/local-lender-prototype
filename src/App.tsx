@@ -4,6 +4,8 @@ import { AppProvider } from './context/AppContext';
 import { AccountPage } from './pages/AccountPage';
 import { ExplorePage } from './pages/ExplorePage';
 import { ListItemPage } from './pages/ListItemPage';
+import { ListingsPage } from './pages/ListingsPage';
+import { RequestsPage } from './pages/RequestsPage';
 
 export const App = () => {
   return (
@@ -15,6 +17,8 @@ export const App = () => {
             <Route path="/" element={<ExplorePage />} />
             <Route path="/list-item" element={<ListItemPage />} />
             <Route path="/account" element={<AccountPage />} />
+            <Route path="/listings" element={<ListingsPage />} />
+            <Route path="/requests" element={<RequestsPage />} />
           </Routes>
         </div>
       </BrowserRouter>
