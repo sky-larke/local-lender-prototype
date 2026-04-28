@@ -60,8 +60,10 @@ export const ListingModal = ({ listing, ownerRating, onClose, onRequestSent, onD
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/50 px-4">
-      <div className="relative max-h-[90vh] w-full max-w-2xl overflow-y-auto rounded-3xl bg-white shadow-2xl">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/50 px-4"
+    onClick={onClose}>
+      <div className="relative max-h-[90vh] w-full max-w-2xl overflow-y-auto rounded-3xl bg-white shadow-2xl"
+      onClick={(e) => e.stopPropagation()}>
         <button
           type="button"
           onClick={() => { setShowRequestForm(false); onClose(); }}
