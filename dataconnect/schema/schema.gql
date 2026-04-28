@@ -21,6 +21,7 @@ type Item @table {
   meetupLocationType: String
   meetupLocationDetails: String
   lender: User
+  condition: String # new | like_new | good | fair | poor | ;
 }
 
 type LendingRequest @table {

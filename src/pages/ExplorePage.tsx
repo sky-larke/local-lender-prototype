@@ -20,6 +20,7 @@ function mapItem(item: ListItemsData['items'][0]): Listing {
     category: item.category ?? '',
     lenderId: item.lender?.uid ?? '',
     lenderName: item.lender?.displayName ?? '',
+    condition: (item.condition as Listing['condition']) || 'good',
   };
 }
 

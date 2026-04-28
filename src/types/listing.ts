@@ -14,6 +14,7 @@ export interface Listing {
   category: string;
   lenderId: string;
   lenderName: string;
+  condition: ListingCondition;
 }
 
 export interface ListingFormValues {

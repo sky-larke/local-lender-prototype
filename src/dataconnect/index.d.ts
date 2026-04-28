@@ -21,6 +21,7 @@ export interface CreateItemVariables {
   imageUrl?: string | null;
   locationDetails?: string | null;
   category?: string | null;
+  condition?: string | null;
 }
 
 export interface CreateLendingRequestData {
@@ -93,6 +94,7 @@ export interface GetItemData {
     category?: string | null;
     meetupLocationType?: string | null;
     meetupLocationDetails?: string | null;
+    condition?: string | null;
     lender?: {
       uid: string;
       displayName: string;
@@ -147,6 +149,7 @@ export interface ListItemsData {
     category?: string | null;
     meetupLocationType?: string | null;
     meetupLocationDetails?: string | null;
+    condition?: string | null;
     lender?: {
       uid: string;
       displayName: string;
@@ -168,6 +171,7 @@ export interface ListMyItemsData {
     category?: string | null;
     meetupLocationType?: string | null;
     meetupLocationDetails?: string | null;
+    condition?: string | null;
   } & Item_Key)[];
 }
 
@@ -240,6 +244,7 @@ export interface UpdateItemVariables {
   imageUrl?: string | null;
   locationDetails?: string | null;
   category?: string | null;
+  condition: string;
 }
 
 export interface UpdateLendingRequestStatusData {

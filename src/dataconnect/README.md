@@ -124,6 +124,7 @@ export interface ListItemsData {
     category?: string | null;
     meetupLocationType?: string | null;
     meetupLocationDetails?: string | null;
+    condition?: string | null;
     lender?: {
       uid: string;
       displayName: string;
@@ -238,6 +239,7 @@ export interface GetItemData {
     category?: string | null;
     meetupLocationType?: string | null;
     meetupLocationDetails?: string | null;
+    condition?: string | null;
     lender?: {
       uid: string;
       displayName: string;
@@ -358,6 +360,7 @@ export interface ListMyItemsData {
     category?: string | null;
     meetupLocationType?: string | null;
     meetupLocationDetails?: string | null;
+    condition?: string | null;
   } & Item_Key)[];
 }
 ```
@@ -1206,6 +1209,7 @@ export interface CreateItemVariables {
   imageUrl?: string | null;
   locationDetails?: string | null;
   category?: string | null;
+  condition?: string | null;
 }
 ```
 ### Return Type
@@ -1231,13 +1235,14 @@ const createItemVars: CreateItemVariables = {
   imageUrl: ..., // optional
   locationDetails: ..., // optional
   category: ..., // optional
+  condition: ..., // optional
 };
 
 // Call the `createItem()` function to execute the mutation.
 // You can use the `await` keyword to wait for the promise to resolve.
 const { data } = await createItem(createItemVars);
 // Variables can be defined inline as well.
-const { data } = await createItem({ title: ..., description: ..., price: ..., imageUrl: ..., locationDetails: ..., category: ..., });
+const { data } = await createItem({ title: ..., description: ..., price: ..., imageUrl: ..., locationDetails: ..., category: ..., condition: ..., });
 
 // You can also pass in a `DataConnect` instance to the action shortcut function.
 const dataConnect = getDataConnect(connectorConfig);
@@ -1266,12 +1271,13 @@ const createItemVars: CreateItemVariables = {
   imageUrl: ..., // optional
   locationDetails: ..., // optional
   category: ..., // optional
+  condition: ..., // optional
 };
 
 // Call the `createItemRef()` function to get a reference to the mutation.
 const ref = createItemRef(createItemVars);
 // Variables can be defined inline as well.
-const ref = createItemRef({ title: ..., description: ..., price: ..., imageUrl: ..., locationDetails: ..., category: ..., });
+const ref = createItemRef({ title: ..., description: ..., price: ..., imageUrl: ..., locationDetails: ..., category: ..., condition: ..., });
 
 // You can also pass in a `DataConnect` instance to the `MutationRef` function.
 const dataConnect = getDataConnect(connectorConfig);
@@ -1331,6 +1337,7 @@ export interface UpdateItemVariables {
   imageUrl?: string | null;
   locationDetails?: string | null;
   category?: string | null;
+  condition: string;
 }
 ```
 ### Return Type
@@ -1357,13 +1364,14 @@ const updateItemVars: UpdateItemVariables = {
   imageUrl: ..., // optional
   locationDetails: ..., // optional
   category: ..., // optional
+  condition: ..., 
 };
 
 // Call the `updateItem()` function to execute the mutation.
 // You can use the `await` keyword to wait for the promise to resolve.
 const { data } = await updateItem(updateItemVars);
 // Variables can be defined inline as well.
-const { data } = await updateItem({ id: ..., title: ..., description: ..., price: ..., imageUrl: ..., locationDetails: ..., category: ..., });
+const { data } = await updateItem({ id: ..., title: ..., description: ..., price: ..., imageUrl: ..., locationDetails: ..., category: ..., condition: ..., });
 
 // You can also pass in a `DataConnect` instance to the action shortcut function.
 const dataConnect = getDataConnect(connectorConfig);
@@ -1393,12 +1401,13 @@ const updateItemVars: UpdateItemVariables = {
   imageUrl: ..., // optional
   locationDetails: ..., // optional
   category: ..., // optional
+  condition: ..., 
 };
 
 // Call the `updateItemRef()` function to get a reference to the mutation.
 const ref = updateItemRef(updateItemVars);
 // Variables can be defined inline as well.
-const ref = updateItemRef({ id: ..., title: ..., description: ..., price: ..., imageUrl: ..., locationDetails: ..., category: ..., });
+const ref = updateItemRef({ id: ..., title: ..., description: ..., price: ..., imageUrl: ..., locationDetails: ..., category: ..., condition: ..., });
 
 // You can also pass in a `DataConnect` instance to the `MutationRef` function.
 const dataConnect = getDataConnect(connectorConfig);

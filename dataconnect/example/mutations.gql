@@ -15,6 +15,7 @@ mutation CreateItem(
   $imageUrl: String
   $locationDetails: String
   $category: String
+  $condition: String
 ) @auth(level: USER) {
   item_insert(data: {
     title: $title
@@ -23,6 +24,7 @@ mutation CreateItem(
     imageUrl: $imageUrl
     locationDetails: $locationDetails
     category: $category
+    condition: $condition
     status: "available"
     createdAt_expr: "request.time"
     lenderUid_expr: "auth.uid"
@@ -37,15 +39,20 @@ mutation UpdateItem(
   $imageUrl: String
   $locationDetails: String
   $category: String
+  $condition: String
 ) @auth(level: USER) {
-  item_update(id: $id, data: {
-    title: $title
-    description: $description
-    price: $price
-    imageUrl: $imageUrl
-    locationDetails: $locationDetails
-    category: $category
-  })
+  item_update(
+    id: $id
+    data: {
+      title: $title
+      description: $description
+      price: $price
+      imageUrl: $imageUrl
+      locationDetails: $locationDetails
+      category: $category
+      condition: $condition
+    }
+  )
 }
 
 mutation UpdateItemStatus($id: UUID!, $status: String!) @auth(level: USER) {

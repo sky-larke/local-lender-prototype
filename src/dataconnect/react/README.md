@@ -160,6 +160,7 @@ export interface ListItemsData {
     category?: string | null;
     meetupLocationType?: string | null;
     meetupLocationDetails?: string | null;
+    condition?: string | null;
     lender?: {
       uid: string;
       displayName: string;
@@ -252,6 +253,7 @@ export interface GetItemData {
     category?: string | null;
     meetupLocationType?: string | null;
     meetupLocationDetails?: string | null;
+    condition?: string | null;
     lender?: {
       uid: string;
       displayName: string;
@@ -345,6 +347,7 @@ export interface ListMyItemsData {
     category?: string | null;
     meetupLocationType?: string | null;
     meetupLocationDetails?: string | null;
+    condition?: string | null;
   } & Item_Key)[];
 }
 ```
@@ -1024,6 +1027,7 @@ export interface CreateItemVariables {
   imageUrl?: string | null;
   locationDetails?: string | null;
   category?: string | null;
+  condition?: string | null;
 }
 ```
 ### Return Type
@@ -1079,10 +1083,11 @@ export default function CreateItemComponent() {
     imageUrl: ..., // optional
     locationDetails: ..., // optional
     category: ..., // optional
+    condition: ..., // optional
   };
   mutation.mutate(createItemVars);
   // Variables can be defined inline as well.
-  mutation.mutate({ title: ..., description: ..., price: ..., imageUrl: ..., locationDetails: ..., category: ..., });
+  mutation.mutate({ title: ..., description: ..., price: ..., imageUrl: ..., locationDetails: ..., category: ..., condition: ..., });
 
   // You can also pass in a `useDataConnectMutationOptions` object to `UseMutationResult.mutate()`.
   const options = {
@@ -1129,6 +1134,7 @@ export interface UpdateItemVariables {
   imageUrl?: string | null;
   locationDetails?: string | null;
   category?: string | null;
+  condition: string;
 }
 ```
 ### Return Type
@@ -1185,10 +1191,11 @@ export default function UpdateItemComponent() {
     imageUrl: ..., // optional
     locationDetails: ..., // optional
     category: ..., // optional
+    condition: ..., 
   };
   mutation.mutate(updateItemVars);
   // Variables can be defined inline as well.
-  mutation.mutate({ id: ..., title: ..., description: ..., price: ..., imageUrl: ..., locationDetails: ..., category: ..., });
+  mutation.mutate({ id: ..., title: ..., description: ..., price: ..., imageUrl: ..., locationDetails: ..., category: ..., condition: ..., });
 
   // You can also pass in a `useDataConnectMutationOptions` object to `UseMutationResult.mutate()`.
   const options = {

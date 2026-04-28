@@ -9,6 +9,7 @@ interface ListingCardProps {
 
 export const ListingCard = ({ listing, ownerRating, onClick }: ListingCardProps) => {
   const ratingLabel = typeof ownerRating === 'number' ? `${ownerRating.toFixed(1)} ★` : "No Rating Yet";
+
   const statusLabel: Record<typeof listing.status, string> = {
     available: 'Available',
     lent: 'Lent out',
@@ -20,6 +21,10 @@ export const ListingCard = ({ listing, ownerRating, onClick }: ListingCardProps)
     lent: 'bg-sky-100 text-sky-700',
     unavailable: 'bg-amber-100 text-amber-700',
   };
+
+  // helper to make condition look nicer
+  const formatCondition = (condition: string) =>
+    condition.replace('_', ' ').replace(/\b\w/g, c => c.toUpperCase());
 
   return (
     <button
@@ -49,10 +54,18 @@ export const ListingCard = ({ listing, ownerRating, onClick }: ListingCardProps)
             <p className="text-xs font-semibold uppercase tracking-wide text-emerald-700">
               {listing.category}
             </p>
-            <h3 className="mt-1 text-lg font-semibold text-slate-900">{listing.title}</h3>
+
+            <h3 className="mt-1 text-lg font-semibold text-slate-900">
+              {listing.title}
+            </h3>
+
             <p className="mt-1 text-sm text-slate-500">
               Owner: <b>{listing.lenderName}</b>
               {ratingLabel ? ` (${ratingLabel})` : ''}
+            </p>
+
+            <p className="text-sm text-slate-500">
+              Condition: <b>{formatCondition(listing.condition)}</b>
             </p>
           </div>
 
@@ -61,7 +74,9 @@ export const ListingCard = ({ listing, ownerRating, onClick }: ListingCardProps)
           </span>
         </div>
 
-        <p className="mt-4 text-sm leading-6 text-slate-600">{listing.description}</p>
+        <p className="mt-4 text-sm leading-6 text-slate-600">
+          {listing.description}
+        </p>
 
         <div className="mt-4 flex items-center justify-between gap-3 text-sm text-slate-600">
           <span>{listing.locationDetails}</span>

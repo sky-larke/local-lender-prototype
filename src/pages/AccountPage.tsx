@@ -38,6 +38,7 @@ function mapItem(item: SDKItem, currentUser: any): Listing {
     category: item.category ?? '',
     lenderId: currentUser?.uid ?? '',
     lenderName: currentUser?.displayName ?? '',
+    condition: (item.condition as Listing['condition']) || 'good',
   };
 }
 
@@ -102,19 +103,34 @@ export const AccountPage = () => {
   }, [myReviews]);
 
   const [editingListing, setEditingListing] = useState<Listing | null>(null);
+
   const [editValues, setEditValues] = useState<ListingFormValues>({
-    title: '', description: '', price: 0, locationDetails: '', category: 'Tools', imageUrl: '',
+    title: '',
+    description: '',
+    price: 0,
+    locationDetails: '',
+    category: 'Tools',
+    imageUrl: '',
+    condition: 'good',
   });
+
   const [imagePreview, setImagePreview] = useState('');
   const [actionError, setActionError] = useState('');
 
   const handleEditClick = (listing: Listing) => {
     setEditingListing(listing);
+
     setEditValues({
-      title: listing.title, description: listing.description, price: listing.price,
-      locationDetails: listing.locationDetails, category: listing.category, imageUrl: listing.imageUrl,
+      title: listing.title,
+      description: listing.description,
+      price: listing.price ?? 0,
+      locationDetails: listing.locationDetails ?? '',
+      category: listing.category ?? 'Tools',
+      imageUrl: listing.imageUrl ?? '',
+      condition: listing.condition ?? 'good',
     });
-    setImagePreview(listing.imageUrl);
+
+    setImagePreview(listing.imageUrl ?? '');
   };
 
   const handleImageChange = (event: ChangeEvent<HTMLInputElement>) => {
@@ -145,6 +161,7 @@ export const AccountPage = () => {
       imageUrl: editValues.imageUrl || imagePreview || '',
       locationDetails: editValues.locationDetails,
       category: editValues.category,
+      condition: editValues.condition,
     };
 
     setMyListings((current) =>
@@ -161,6 +178,7 @@ export const AccountPage = () => {
         imageUrl: editValues.imageUrl || imagePreview || null,
         locationDetails: editValues.locationDetails,
         category: editValues.category,
+        condition: editValues.condition,
       });
     } catch {
       setMyListings(previousListings);
@@ -444,6 +462,25 @@ export const AccountPage = () => {
                         Location
                         <input required value={editValues.locationDetails} onChange={(e) => setEditValues((v) => ({ ...v, locationDetails: e.target.value }))}
                           className="mt-2 w-full rounded-2xl border border-slate-300 px-4 py-3" />
+                      </label>
+                      <label className="block text-sm font-medium text-slate-700">
+                        Condition
+                        <select
+                          value={editValues.condition}
+                          onChange={(e) =>
+                            setEditValues((v) => ({
+                              ...v,
+                              condition: e.target.value as ListingFormValues['condition'],
+                            }))
+                          }
+                          className="mt-2 w-full rounded-2xl border border-slate-300 px-4 py-3"
+                        >
+                          <option value="new">New</option>
+                          <option value="like_new">Like new</option>
+                          <option value="good">Good</option>
+                          <option value="fair">Fair</option>
+                          <option value="poor">Poor</option>
+                        </select>
                       </label>
                       <label className="block text-sm font-medium text-slate-700">
                         Photo
