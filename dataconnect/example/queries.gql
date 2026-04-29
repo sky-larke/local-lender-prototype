@@ -102,6 +102,10 @@ query ListOutgoingRequests @auth(level: USER) {
         displayName
       }
     }
+    lender {
+      uid
+      displayName
+    }
   }
 }
 
@@ -118,6 +122,26 @@ query ListMyReviews @auth(level: USER) {
     reviewer {
       uid
       displayName
+    }
+    lendingRequest {
+      id
+      startDate
+      endDate
+      status
+      borrower {
+        uid
+        displayName
+      }
+      lender {
+        uid
+        displayName
+      }
+      item {
+        id
+        title
+        imageUrl
+        category
+      }
     }
   }
 }
