@@ -518,6 +518,10 @@ export interface ListOutgoingRequestsData {
         displayName: string;
       } & User_Key;
     } & Item_Key;
+      lender?: {
+        uid: string;
+        displayName: string;
+      } & User_Key;
   } & LendingRequest_Key)[];
 }
 ```
@@ -597,6 +601,26 @@ export interface ListMyReviewsData {
       uid: string;
       displayName: string;
     } & User_Key;
+      lendingRequest?: {
+        id: UUIDString;
+        startDate?: DateString | null;
+        endDate?: DateString | null;
+        status: string;
+        borrower?: {
+          uid: string;
+          displayName: string;
+        } & User_Key;
+          lender?: {
+            uid: string;
+            displayName: string;
+          } & User_Key;
+            item?: {
+              id: UUIDString;
+              title: string;
+              imageUrl?: string | null;
+              category?: string | null;
+            } & Item_Key;
+      } & LendingRequest_Key;
   } & Review_Key)[];
 }
 ```

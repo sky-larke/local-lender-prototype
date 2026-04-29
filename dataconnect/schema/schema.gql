@@ -18,10 +18,10 @@ type Item @table {
   imageUrl: String
   locationDetails: String
   category: String
+  condition: String # new | like_new | good | fair | poor
   meetupLocationType: String
   meetupLocationDetails: String
   lender: User
-  condition: String # new | like_new | good | fair | poor | ;
 }
 
 type LendingRequest @table {
