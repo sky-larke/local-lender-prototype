@@ -3,6 +3,7 @@ import { useQueryClient } from '@tanstack/react-query';
 import { useListItems, useListReviews } from '../dataconnect/react';
 import { ListingCard } from '../components/ListingCard';
 import { ListingModal } from '../components/ListingModal';
+import { OwnerProfileModal } from '../components/OwnerProfileModal';
 import { SearchBar } from '../components/SearchBar';
 import type { Listing } from '../types/listing';
 import type { ListItemsData } from '../dataconnect';
@@ -34,6 +35,7 @@ export const ExplorePage = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [statusMessage, setStatusMessage] = useState('');
   const [selectedListing, setSelectedListing] = useState<Listing | null>(null);
+  const [selectedOwner, setSelectedOwner] = useState<{ lenderId: string; lenderName: string } | null>(null);
 
   const ownerRatings = useMemo(() => {
     const ratingMap = new Map<string, { total: number; count: number }>();
@@ -110,6 +112,7 @@ export const ExplorePage = () => {
               listing={listing}
               ownerRating={ownerRatings.get(listing.lenderName)}
               onClick={setSelectedListing}
+              onOwnerClick={(lenderId, lenderName) => setSelectedOwner({ lenderId, lenderName })}
             />
           ))}
         </div>
@@ -128,6 +131,13 @@ export const ExplorePage = () => {
           setStatusMessage(`Request sent for "${listing.title}". ${listing.lenderName} will be notified.`);
           setSelectedListing(null);
         }}
+      />
+
+      <OwnerProfileModal
+        lenderId={selectedOwner?.lenderId ?? ''}
+        lenderName={selectedOwner?.lenderName ?? ''}
+        onClose={() => setSelectedOwner(null)}
+        onListingClick={setSelectedListing}
       />
     </main>
   );

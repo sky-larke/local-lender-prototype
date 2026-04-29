@@ -5,9 +5,10 @@ interface ListingCardProps {
   listing: Listing;
   ownerRating?: number;
   onClick?: (listing: Listing) => void;
+  onOwnerClick?: (lenderId: string, lenderName: string) => void;
 }
 
-export const ListingCard = ({ listing, ownerRating, onClick }: ListingCardProps) => {
+export const ListingCard = ({ listing, ownerRating, onClick, onOwnerClick }: ListingCardProps) => {
   const ratingLabel = typeof ownerRating === 'number' ? `${ownerRating.toFixed(1)} ★` : "No Rating Yet";
 
   const statusLabel: Record<typeof listing.status, string> = {
@@ -60,7 +61,17 @@ export const ListingCard = ({ listing, ownerRating, onClick }: ListingCardProps)
             </h3>
 
             <p className="mt-1 text-sm text-slate-500">
-              Owner: <b>{listing.lenderName}</b>
+              Owner:{' '}
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onOwnerClick?.(listing.lenderId, listing.lenderName);
+                }}
+                className="font-semibold text-emerald-600 hover:text-emerald-800 hover:underline"
+              >
+                {listing.lenderName}
+              </button>
               {ratingLabel ? ` (${ratingLabel})` : ''}
             </p>
 
