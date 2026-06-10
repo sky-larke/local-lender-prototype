@@ -30,6 +30,7 @@ export const ListingCard = ({ listing, ownerRating, onClick, onOwnerClick }: Lis
   return (
     <button
       type="button"
+      data-cy="listing-card"
       onClick={() => {
         onClick?.(listing);
       }}

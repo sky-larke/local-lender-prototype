@@ -69,7 +69,7 @@ export const ExplorePage = () => {
 
   return (
     <main className="mx-auto max-w-6xl px-4 py-6">
-      <section className="rounded-3xl bg-linear-to-br from-emerald-100 via-white to-sky-100 p-6 shadow-sm">
+      <section data-cy="hero" className="rounded-3xl bg-linear-to-br from-emerald-100 via-white to-sky-100 p-6 shadow-sm">
         <p className="text-sm font-semibold uppercase tracking-wide text-emerald-700">
           High-trust community lending
         </p>
