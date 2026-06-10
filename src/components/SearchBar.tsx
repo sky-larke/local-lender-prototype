@@ -11,6 +11,7 @@ export const SearchBar = ({ value, onChange }: SearchBarProps) => {
       </span>
       <input
         type="search"
+        data-cy="search-input"
         value={value}
         onChange={(event) => {
           onChange(event.target.value);

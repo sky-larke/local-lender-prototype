@@ -16,4 +16,10 @@ describe('Test App', () => {
     cy.get('[data-cy=listing-card]').should('exist');
   });
 
+  it('shows empty state when search returns no results', () => {
+    cy.visit('/');
+    cy.get('[data-cy=search-input]').type('xyzzy99notreal');
+    cy.contains('No listings match your search yet.').should('exist');
+  });
+
 });
