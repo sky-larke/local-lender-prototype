@@ -20,6 +20,7 @@ export const ListingModal = ({ listing, ownerRating, onClose, onRequestSent, onD
   const { mutateAsync: createLendingRequest, isPending } = useCreateLendingRequest();
 
   const [showRequestForm, setShowRequestForm] = useState(false);
+  const [requestSent, setRequestSent] = useState(false);
   const [values, setValues] = useState<LendingRequestFormValues>({
     borrowerNotes: '',
     startDate: '',
@@ -55,6 +56,7 @@ export const ListingModal = ({ listing, ownerRating, onClose, onRequestSent, onD
     });
     await queryClient.invalidateQueries();
     setShowRequestForm(false);
+    setRequestSent(true);
     setValues({ borrowerNotes: '', startDate: '', endDate: '' });
     onRequestSent(listing);
   };
@@ -169,14 +171,14 @@ export const ListingModal = ({ listing, ownerRating, onClose, onRequestSent, onD
             <div className="mt-6 grid gap-3 sm:grid-cols-1">
               <button
                 type="button"
-                disabled={!isAvailable}
+                disabled={!isAvailable || requestSent}
                 onClick={() => {
                   if (!currentUser) { onDirectMessage(listing); return; }
                   setShowRequestForm(true);
                 }}
                 className="rounded-2xl bg-emerald-600 px-4 py-3 text-sm font-semibold text-white hover:bg-emerald-700 disabled:cursor-not-allowed disabled:opacity-60"
               >
-                {currentUser ? 'Request to borrow' : 'Sign in to request'}
+                {requestSent ? 'Request sent' : currentUser ? 'Request to borrow' : 'Sign in to request'}
               </button>
             </div>
           )}
